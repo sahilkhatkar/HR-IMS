@@ -31,7 +31,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return {
             id: "test",
             name: "Admin User",
-            email: "admin@sppl.com",
+            email: "admin@google.com",
             image:
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiMobM3dnjg-13GqCOo9EtioNfZ-FXLiU-Ag&s",
           };
@@ -44,7 +44,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ account, profile }) {
       if (account.provider === "google") {
         return (
-          profile.email_verified && profile.email.endsWith("@sainpackaging.com") ||
+          profile.email_verified && profile.email.endsWith("@shaziarice.com") ||
           profile.email_verified && profile.email.endsWith("sk2061899@gmail.com")
         );
       }
