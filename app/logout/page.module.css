@@ -1,0 +1,84 @@
+/* Light-themed full screen container */
+.fullscreenContainer {
+  /* width: 100vw; */
+  height: 100vh;
+  background: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+/* Center card with soft shadows */
+.profileCard {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+/* Profile Image */
+.profileImage {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 3px solid #eeeeee;
+}
+
+/* Titles and Text */
+.title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.info {
+  margin-bottom: 1.5rem;
+}
+
+.name {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  color: #444;
+}
+
+.email {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.confirmation {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+/* Sign Out Button */
+.logoutBtn {
+  background-color: #0070f3;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.logoutBtn:hover {
+  background-color: #0059c1;
+}
+
+.logoutBtn:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}

@@ -1,0 +1,148 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.searchSection {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input {
+    flex: 1;
+    padding: 0.6rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.searchBtn,
+.submitBtn {
+    background: #007bff;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.searchBtn:hover,
+.submitBtn:hover {
+    background: #0056b3;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.itemDetails {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.formGroup label {
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+
+.searchResults {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-top: 3rem;
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    z-index: 10;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.resultItem {
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+}
+
+.resultItem:hover {
+    background-color: #f0f0f0;
+}
+
+
+/* Toggle */
+.entryTypeRow {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 0.4rem;
+}
+
+.entryLabel {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+}
+
+/* Small Toggle Styles */
+.smallToggle {
+    position: relative;
+    width: 50px;
+    height: 26px;
+    background-color: #ccc;
+    border-radius: 999px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color 0.3s ease;
+}
+
+.smallToggle.inward {
+    background-color: #cce5ff;
+}
+
+.smallToggle.outward {
+    background-color: #ffd6cc;
+}
+
+.knob {
+    width: 20px;
+    height: 20px;
+    background-color: #007bff;
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    z-index: 1;
+    transition: left 0.3s ease;
+}
+
+.smallToggle.outward .knob {
+    left: calc(100% - 23px);
+    background-color: #ff5722;
+}

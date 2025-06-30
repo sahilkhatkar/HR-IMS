@@ -1,0 +1,101 @@
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+    /* Responsive height */
+  height: fit-content; /* between 80-90% of the screen */
+  max-height: 90vh;
+  /* Limit modal height */
+  overflow-y: auto;
+  /* Scroll if content overflows */
+  padding: 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+
+  /* Optional for smoother scrolling */
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}
+
+.modal h2 {
+  color: var(--color-primary-blue);
+  margin-bottom: 1.5rem;
+}
+
+/* Optional: Style scrollbar for WebKit browsers */
+.modal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+.formGroup {
+  margin-bottom: 1rem;
+}
+
+.formGroup label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  /* Prevents default blue glow */
+  transition: border-color 0.3s ease;
+}
+
+.formGroup input:focus {
+  border-color: #007bff;
+  /* Blue border when selected */
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.modalActions button {
+  padding: 0.5rem 1.2rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.saveBtn {
+  background-color: #00bcd4;
+  background-color: var(--color-primary-blue);
+  color: white;
+}
+
+.saveBtn:hover {
+  background-color: #0097a7;
+}
+
+.formGroup select {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}

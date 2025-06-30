@@ -1,0 +1,15 @@
+.bodyCss {
+    background: var(--body-background);
+}
+
+.mainContent {
+
+    /* border: 2px solid red; */
+    flex: 1 1 auto;
+    /* padding: 1rem 1rem 1rem 0; */
+    margin: 0;
+
+    background: var(--color-col2);
+    max-height: 100vh;
+    overflow: auto;
+}

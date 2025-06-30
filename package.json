@@ -1,0 +1,24 @@
+{
+  "name": "ims-web-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@react-icons/all-files": "^4.1.0",
+    "@reduxjs/toolkit": "^2.8.2",
+    "framer-motion": "^12.18.1",
+    "next": "15.3.4",
+    "next-auth": "^5.0.0-beta.29",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
+    "react-redux": "^9.2.0",
+    "react-select": "^5.10.1",
+    "react-toastify": "^11.0.5"
+  }
+}

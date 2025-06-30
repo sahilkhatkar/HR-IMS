@@ -1,0 +1,131 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  /* or 100% if used inside a layout */
+  padding: 1.5rem;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  /* prevent internal scroll */
+}
+
+.heading {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--color-primary-blue);
+}
+
+.tableWrapper {
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: hidden;
+  overflow-x: auto;
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  /* border: 1px solid #eee; */
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.table th,
+.table td {
+  /* border: 1px solid #eee; */
+  padding: 0.75rem;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.required {
+  color: red;
+}
+
+.inputField {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  transition: border 0.2s ease;
+}
+
+.inputField:focus {
+  border-color: #1976d2;
+  outline: none;
+}
+
+.selectField {
+  min-width: 180px;
+}
+
+.removeBtn {
+  background: #ff4d4f;
+  color: white;
+  font-size: 1.1rem;
+  border: none;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.table td:has(.removeBtn) {
+  text-align: center;
+}
+
+.actions {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.addRowBtn,
+.submitBtn {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.addRowBtn {
+  background: var(--color-completed-order);
+}
+
+.addRowBtn:hover {
+  background:  #218838;
+
+}
+
+.submitBtn:hover {
+  background: #115293;
+}
+
+.toast {
+  margin-top: 1rem;
+  background: #4caf50;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+
+.previewBtn {
+  background-color: #555;
+  color: white;
+  padding: 0.5em 1em;
+  border: none;
+  border-radius: 5px;
+  margin-left: 1rem;
+  cursor: pointer;
+}

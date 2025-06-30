@@ -1,0 +1,64 @@
+.background {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100dvh;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  font-family: 'Segoe UI', sans-serif;
+  overflow: hidden;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 3rem 4rem;
+  color: #333;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dee2e6;
+}
+
+.card h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.buttons button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background: linear-gradient(to right, #4facfe, #00f2fe);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.buttons button:hover {
+  background: linear-gradient(to right, #00f2fe, #4facfe);
+}
+
+.buttons .admin {
+  background: linear-gradient(to right, #f7971e, #ffd200);
+  color: white;
+}
+
+.buttons .admin:hover {
+  background: linear-gradient(to right, #ffd200, #f7971e);
+}

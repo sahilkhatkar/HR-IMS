@@ -1,0 +1,208 @@
+/* ========== Layout & Headings ========== */
+.inventoryContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 1.5rem;
+  overflow: hidden;
+}
+
+.heading {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  color: var(--color-primary-blue);
+}
+
+.subheading {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  transition: color 0.3s ease;
+}
+
+.subheading.inward {
+  color: green;
+}
+
+.subheading.outward {
+  color: orangered;
+}
+
+/* ========== Buttons ========== */
+.toggleBtn,
+.addBtn,
+.submitBtn {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  margin: 1rem 0.5rem 0;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  width: fit-content;
+}
+
+.toggleBtn:hover,
+.addBtn:hover,
+.submitBtn:hover {
+  background-color: #135ba1;
+}
+
+.actionButtons {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+
+/* ========== Table Wrapper ========== */
+.tableWrapper {
+  overflow-x: auto;
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+.inventoryTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.inventoryTable th,
+.inventoryTable td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  vertical-align: middle;
+  text-align: justify;
+  width: auto;
+  white-space: nowrap;
+}
+
+/* Specific Column Widths */
+.inventoryTable th:first-child,
+.inventoryTable td:first-child,
+.inventoryTable th:last-child,
+.inventoryTable td:last-child {
+  width: 60px;
+  text-align: center;
+}
+
+.qtyCol {
+  width: 100px;
+}
+
+.plantCol {
+  width: 180px;
+}
+
+.saleOrderCol {
+  width: 200px;
+}
+
+.itemCodeCol {
+  min-width: 5rem;
+  max-width: 400px;
+  width: 100%;
+}
+
+/* ========== Input Fields ========== */
+.inventoryTable input {
+  width: 100%;
+  min-width: 5rem;
+  max-width: 500px;
+  padding: 0.3rem;
+  box-sizing: border-box;
+}
+
+/* ========== React Select ========== */
+.reactSelect {
+  min-width: 5rem;
+  max-width: 400px;
+  width: 100%;
+}
+
+/* ========== Item Description ========== */
+.itemDescription {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.3rem;
+  text-align: left;
+  white-space: normal;
+}
+
+/* ========== Remove Button ========== */
+.removeBtn {
+  background-color: #e53935;
+  color: white;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.removeBtn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* ========== Loading & Error States ========== */
+.loading,
+.error {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 2rem;
+}
+
+.error {
+  color: red;
+}
+/* Add smooth transitions for inputs */
+.inventoryTable input,
+.reactSelect {
+  transition: all 0.2s ease;
+}
+
+/* Optional: Visual distinction for dynamic rows */
+.inventoryTable tr:hover {
+  background-color: #f9f9f9;
+}
+
+
+.required {
+  color: red;
+  margin-left: 4px;
+}
+
+.errorMsg {
+  color: red;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+
+.datePickerWrapper {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dateLabel {
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dateInput {
+  padding: 0.4rem 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
