@@ -36,7 +36,7 @@ export default function LoginPage() {
             Sign in with Google
           </motion.button>
 
-          {/* <motion.button
+          <motion.button
             className={styles.admin}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -48,8 +48,8 @@ export default function LoginPage() {
               })
             }
           >
-            Sign in as Admin
-          </motion.button> */}
+            Sign in as User
+          </motion.button>
         </div>
       </motion.div>
     </div>
