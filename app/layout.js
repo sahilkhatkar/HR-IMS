@@ -6,6 +6,7 @@ import { Inter } from 'next/font/google';
 import StoreProvider from "./StoreProvider";
 import GlobalWrapper from './components/GlobalDataLoader';
 import { SessionProvider } from "next-auth/react";
+import { Suspense } from 'react';
 import AppLayoutClient from "./AppLayoutClient";
 
 const inter = Inter({
@@ -37,6 +38,9 @@ export default function RootLayout({ children }) {
        `}
         // style={{ display: "flex", maxHeight: "100vh" }}
        >
+
+<Suspense fallback={null}>
+
         {/* ${styles.bodyCss} ${geistSans.variable} ${geistMono.variable} */}
         <SessionProvider>
           <StoreProvider>
@@ -50,7 +54,7 @@ export default function RootLayout({ children }) {
 
             </GlobalWrapper>
           </StoreProvider>
-        </SessionProvider>
+        </SessionProvider></Suspense>
       </body>
     </html>
   );
