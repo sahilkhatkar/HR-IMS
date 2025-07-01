@@ -2,10 +2,14 @@
 import { useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
-import Select from 'react-select';
+// import Select from 'react-select';
 import styles from './page.module.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+import dynamic from 'next/dynamic';
+const Select = dynamic(() => import('react-select'), { ssr: false });
+
 
 
 const script_live_stock_url = "https://script.google.com/macros/s/AKfycbxnnkkjOo5tAHHIKwucr6GrB2pBY4S0PrLUFBMwDkPaImpeGuRvFCDadzfAiq-E_LEeag/exec"
@@ -108,9 +112,11 @@ export default function InventoryForm() {
 
         if (!validateRows()) return;
 
+        setIsSubmitting(true); // 🟢 Start spinner + disable button
+
         const payload = {
             formType: isInward ? 'inward' : 'outward',
-            date: formatDateForPayload(date), // e.g., "26-Jun-2025"
+            date: formatDateForPayload(date),
             entries: rows,
         };
 
@@ -120,8 +126,6 @@ export default function InventoryForm() {
             date: payload.date
         }));
 
-        console.log(flatArray);
-
         try {
             const response = await fetch(script_live_stock_url, {
                 method: 'POST',
@@ -130,18 +134,19 @@ export default function InventoryForm() {
 
             if (response.ok) {
                 toast.success('Inventory submitted successfully!');
-                setRows([createNewRow()]);
+                setRows([createNewRow()]); // ✅ Clear after success
                 setFormErrors([]);
             } else {
                 toast.error('Failed to submit inventory');
             }
         } catch (err) {
             console.error(err);
-            alert('Error submitting inventory');
+            toast.error('Error submitting inventory');
         } finally {
-            setIsSubmitting(false); // ✅ Done
+            setIsSubmitting(false); // 🟢 Re-enable button
         }
     };
+
 
     // if (loading1) return <div className={styles.loading}>Loading...</div>;
     if (error1) return <div className={styles.error}>Error: {error1}</div>;
@@ -152,7 +157,12 @@ export default function InventoryForm() {
     }));
 
     return (
-        <form className={styles.inventoryContainer} onSubmit={handleSubmit}>
+        // <form className={styles.inventoryContainer} onSubmit={handleSubmit}>
+        <form
+            className={`${styles.inventoryContainer} ${isSubmitting ? styles.submitting : ''}`}
+            onSubmit={handleSubmit}
+        >
+
             <h2 className={styles.heading}>Inventory Entry
 
                 <span className={`${styles.subheading} ${isInward ? styles.inward : styles.outward}`}>
@@ -310,7 +320,13 @@ export default function InventoryForm() {
                     Add Row
                 </button>
                 <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
-                    {isSubmitting ? 'Submitting...' : 'Submit'}
+                    {isSubmitting ? (
+                        <>
+                            <span className={styles.spinner}></span> Submitting...
+                        </>
+                    ) : (
+                        'Submit'
+                    )}
                 </button>
 
             </div>

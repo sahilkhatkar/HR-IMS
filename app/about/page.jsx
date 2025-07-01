@@ -63,7 +63,7 @@ export default function AboutPage() {
         <h2>📬 Contact</h2>
         <p>
           For feature requests, bug reports, or integration help, reach out at{' '}
-          <Link href="mailto:support@example.com">support@mail.com</Link>.
+          <Link href="mailto:dme@shaziarice.com">dme@shaziarice.com</Link>.
         </p>
       </section>
     </motion.div>

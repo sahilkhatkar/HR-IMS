@@ -280,7 +280,7 @@ export default function AnimatedTable() {
           >
             <motion.button
               className={styles.addButton}
-              // onClick={() => setIsModalOpen(true)}
+              onClick={() => setIsModalOpen(true)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -392,7 +392,7 @@ export default function AnimatedTable() {
 
             {currentItems.map((item, _) => (
               <motion.tr
-                key={item.id}
+                key={item.item_code}
                 // variants={rowVariants}
                 className={styles.tableRow}
 

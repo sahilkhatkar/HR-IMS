@@ -77,7 +77,7 @@
   background: white;
   border-radius: 12px;
   padding: 1rem;
-
+  margin-block: 0.5rem;
   flex-grow: 1;
   flex-shrink: 1;
 }
@@ -261,7 +261,32 @@
 }
 
 .inventoryTable td:nth-child(2),
-.inventoryTable td:nth-child(4)
- {
+.inventoryTable td:nth-child(4) {
   min-width: 20rem;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.submitting {
+  cursor: progress !important;
+}
+
+.submitting * {
+  cursor: progress !important;
 }
