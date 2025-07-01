@@ -132,7 +132,7 @@ export default function AnimatedTable() {
   const hsnCodeOptions = getUniqueValues('hsn_code');
 
 
-  if (loading1) return <p>Loading script1 data...</p>;
+  if (loading1) return <p>Loading masterData data...</p>;
   if (error1) return <p>Error: {error1}</p>;
   if (!masterData) return <p>No data found.</p>;
 

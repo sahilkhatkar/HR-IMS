@@ -30,8 +30,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           // console.log("Success, user authenticated");
           return {
             id: "test",
-            name: "Admin User",
-            email: "admin@google.com",
+            name: "User",
+            email: "user@shaziarice.com",
             image:
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiMobM3dnjg-13GqCOo9EtioNfZ-FXLiU-Ag&s",
           };

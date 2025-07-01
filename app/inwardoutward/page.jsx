@@ -10,7 +10,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const script_live_stock_url = "https://script.google.com/macros/s/AKfycbxnnkkjOo5tAHHIKwucr6GrB2pBY4S0PrLUFBMwDkPaImpeGuRvFCDadzfAiq-E_LEeag/exec"
 
-const InventoryForm = () => {
+export default function InventoryForm() {
+
     const { masterData, loading1, error1 } = useSelector((state) => state.data);
     const [isInward, setIsInward] = useState(true);
     const [rows, setRows] = useState([createNewRow()]);
@@ -25,7 +26,12 @@ const InventoryForm = () => {
         return today.toISOString().split('T')[0]; // "2025-06-26"
     });
 
-
+    const allPlantOptions = Array.from(new Set(masterData?.map(item => item.plant_name)))
+        .filter(Boolean)
+        .map(plant => ({
+            value: plant,
+            label: plant,
+        }));
 
     function createNewRow() {
         return {
@@ -137,7 +143,7 @@ const InventoryForm = () => {
         }
     };
 
-    if (loading1) return <div className={styles.loading}>Loading...</div>;
+    // if (loading1) return <div className={styles.loading}>Loading...</div>;
     if (error1) return <div className={styles.error}>Error: {error1}</div>;
 
     const allItemOptions = masterData?.map((item) => ({
@@ -147,27 +153,32 @@ const InventoryForm = () => {
 
     return (
         <form className={styles.inventoryContainer} onSubmit={handleSubmit}>
-            <h2 className={styles.heading}>Inventory Entry</h2>
-            <h3 className={`${styles.subheading} ${isInward ? styles.inward : styles.outward}`}>
-                {isInward ? 'Inward' : 'Outward'} Form
-            </h3>
+            <h2 className={styles.heading}>Inventory Entry
 
-            <button type="button" onClick={handleToggle} className={styles.toggleBtn}>
-                Switch to {isInward ? 'Outward' : 'Inward'}
-            </button>
+                <span className={`${styles.subheading} ${isInward ? styles.inward : styles.outward}`}>
+                    [  {isInward ? 'Inward' : 'Outward'} ]
+                </span>
+            </h2>
 
 
-            <div className={styles.datePickerWrapper}>
-                <label className={styles.dateLabel}>
-                    Date:
-                    <input
-                        type="date"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                        className={styles.dateInput}
-                        required
-                    />
-                </label>
+            <div className={styles.switchAndDate}>
+                <button type="button" onClick={handleToggle} className={styles.toggleBtn}>
+                    Switch to {isInward ? 'Outward' : 'Inward'}
+                </button>
+
+
+                <div className={styles.datePickerWrapper}>
+                    <label className={styles.dateLabel}>
+                        Date:
+                        <input
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            className={styles.dateInput}
+                            required
+                        />
+                    </label>
+                </div>
             </div>
 
 
@@ -185,16 +196,16 @@ const InventoryForm = () => {
                             <th className={styles.itemCodeCol}>
                                 Item Code<span className={styles.required}>*</span>
                             </th>
-                            <th className={styles.qtyCol}>
+                            <th className={styles.midWidth}>
                                 Qty<span className={styles.required}>*</span>
                             </th>
-                            <th className={styles.plantCol}>Plant</th>
+                            <th className={styles.midWidth}>Plant</th>
                             {!isInward && (
                                 <th className={styles.saleOrderCol}>
                                     Sale Order No.<span className={styles.required}>*</span>
                                 </th>
                             )}
-                            <th>Remarks</th>
+                            <th className={styles.midWidth}>Remarks</th>
                             <th>Remove</th>
                         </tr>
                     </thead>
@@ -244,11 +255,19 @@ const InventoryForm = () => {
                                     )}
                                 </td>
                                 <td>
-                                    <input
-                                        type="text"
-                                        value={row.plant}
-                                        onChange={(e) => handleChange(index, 'plant', e.target.value)}
+                                    <Select
+                                        className={styles.reactSelect}
+                                        placeholder="Select plant..."
+                                        value={
+                                            row.plant
+                                                ? { value: row.plant, label: row.plant }
+                                                : null
+                                        }
+                                        options={allPlantOptions}
+                                        onChange={(selected) => handleChange(index, 'plant', selected?.value || '')}
+                                        isClearable
                                     />
+
                                 </td>
                                 {!isInward && (
                                     <td>
@@ -302,6 +321,4 @@ const InventoryForm = () => {
         </form>
 
     );
-};
-
-export default InventoryForm;
+}

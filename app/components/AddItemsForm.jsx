@@ -6,8 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import styles from './AddItemsForm.module.css';
 import PreviewModal from './PreviewModal';
 
-
-const scriptURL = "https://script.google.com/macros/s/AKfycbx-qJ_5XoQbBW7I30RF4KEFPMtqt6MZcUBvdNV1l4I4KUYktMCUbNb9gBrjZ-VlY3cH/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbxDcz6zbGv2o5R2us9Sm9UbrX8OCbO7LakqV_0rf6GaxfL9vFmDyDZKnrv9ZVca8p9oLA/exec";
 
 const fields = {
   description: { label: 'Description', type: 'text', required: true },
@@ -114,8 +113,6 @@ export default function AddItemsForm({
     }
 
 
-    console.log(items);
-
     try {
       setIsSubmitting(true);
       const res = await fetch(scriptURL, {
@@ -128,11 +125,17 @@ export default function AddItemsForm({
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
       setRows([createEmptyRow()]);
+
+      console.log(res);
+
     } catch (err) {
       alert('Error submitting: ' + err.message);
     } finally {
       setIsSubmitting(false);
     }
+
+    console.log("Items: ",items);
+
   };
 
   const customSelectStyles = useMemo(() => ({

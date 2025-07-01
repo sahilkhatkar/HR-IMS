@@ -8,9 +8,8 @@ import { useDispatch } from 'react-redux';
 import { updateMasterItem } from '../../store/slices/gSheetData'; // adjust this path
 
 
-
 // const scriptURL = "https://script.google.com/macros/s/AKfycbx-qJ_5XoQbBW7I30RF4KEFPMtqt6MZcUBvdNV1l4I4KUYktMCUbNb9gBrjZ-VlY3cH/exec";
-const scriptURL = "https://script.google.com/macros/s/AKfycbx-qJ_5XoQbBW7I30RF4KEFPMtqt6MZcUBvdNV1l4I4KUYktMCUbNb9gBrjZ-VlY3cH/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbxDcz6zbGv2o5R2us9Sm9UbrX8OCbO7LakqV_0rf6GaxfL9vFmDyDZKnrv9ZVca8p9oLA/exec";
 
 const dropdownConfig = {
   season: ['Peak', 'Off', 'Normal'],

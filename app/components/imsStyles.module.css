@@ -203,6 +203,8 @@
   gap: 0.5rem;
   font-weight: 500;
   justify-content: space-between;
+
+  font-size: 0.9rem;
 }
 
 .rowsPerPage select {
@@ -231,7 +233,8 @@
 
 
 /* FIlters */
-.filters, .filtersWrapper {
+.filters,
+.filtersWrapper {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -290,9 +293,10 @@
   /* margin-bottom: 1rem; */
   cursor: pointer;
   align-self: flex-end;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: background 0.2s ease;
 }
+
 .addButton:hover {
   background: #5e35b1;
 }
@@ -312,8 +316,15 @@
 }
 
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
 }
 
 /* clearfilter */
@@ -336,4 +347,25 @@
 
 .clearFiltersBtn:hover {
   background-color: #c82333;
+}
+
+
+.totalStockQty {
+  display: flex;
+  /* flex-direction: column; */
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.9rem;
+
+  & p {
+    background: var(--background);
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    padding: 4px 1rem;
+  }
+
+  & span {
+    font-weight: 500;
+  }
 }

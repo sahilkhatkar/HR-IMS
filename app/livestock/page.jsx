@@ -176,6 +176,19 @@ export default function Livestock() {
                         </select>
                     </motion.div>
                 </div>
+
+
+                <div className={styles.totalStockQty}>
+                    <span>
+                        Total Stock
+                    </span>
+                    <p>
+                        {filteredData.reduce((sum, obj) => {
+                            return sum + (Number(obj.stock_qty) || 0); // safely convert to number
+                        }, 0)}
+                    </p>
+                </div>
+
             </div>
 
             <motion.p

@@ -5,27 +5,40 @@
   height: 100vh;
   padding: 1.5rem;
   overflow: hidden;
+
+  max-width: 1600px;
 }
 
 .heading {
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 0.2rem;
+  margin-bottom: 1.2rem;
   color: var(--color-primary-blue);
+
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .subheading {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
+  font-size: 1.5rem;
+
+  /* margin-bottom: 1rem; */
   transition: color 0.3s ease;
 }
 
 .subheading.inward {
-  color: green;
+  color: var(--color-completed-order);
 }
 
 .subheading.outward {
-  color: orangered;
+  color: var(--color-light-coral);
+}
+
+.switchAndDate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 /* ========== Buttons ========== */
@@ -36,7 +49,8 @@
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
-  margin: 1rem 0.5rem 0;
+  /* margin: 1rem 0.5rem 0; */
+  height: fit-content;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 600;
@@ -69,19 +83,29 @@
 }
 
 .inventoryTable {
-  width: 100%;
+  /* width: 100%; */
   border-collapse: collapse;
   margin-top: 1rem;
+
+  /* max-width: 1200px; */
+
+  /* table-layout: fixed; */
 }
 
 .inventoryTable th,
 .inventoryTable td {
-  border: 1px solid #ccc;
-  padding: 0.5rem;
+  /* border: 1px solid #ccc; */
+  padding: 0 0.5rem;
   vertical-align: middle;
   text-align: justify;
-  width: auto;
+  /* Automatically adjusts the eq. width for all */
+  /* width: auto;  */
+  /* max-width: 5rem; */
   white-space: nowrap;
+}
+
+.inventoryTable th {
+  padding: 0.5rem;
 }
 
 /* Specific Column Widths */
@@ -90,40 +114,48 @@
 .inventoryTable th:last-child,
 .inventoryTable td:last-child {
   width: 60px;
+  width: 1%;
+  white-space: nowrap;
   text-align: center;
 }
 
-.qtyCol {
-  width: 100px;
+/* .inventoryTable td {
+  min-width: 2rem;
+  max-width: 15rem;
+} */
+
+.midWidth {
+  width: 150px;
 }
 
-.plantCol {
-  width: 180px;
-}
-
-.saleOrderCol {
+/* .saleOrderCol {
   width: 200px;
-}
+} */
 
-.itemCodeCol {
+/* .itemCodeCol {
   min-width: 5rem;
   max-width: 400px;
   width: 100%;
-}
+} */
 
 /* ========== Input Fields ========== */
 .inventoryTable input {
   width: 100%;
-  min-width: 5rem;
-  max-width: 500px;
+  /* min-width: 5rem; */
+  /* max-width: 500px; */
+  /* height: 2rem; */
   padding: 0.3rem;
+  border-radius: 4px;
+  border: 1px solid #cccccc;
   box-sizing: border-box;
+
+  outline-color: var(--color-primary-blue);
 }
 
 /* ========== React Select ========== */
 .reactSelect {
-  min-width: 5rem;
-  max-width: 400px;
+  /* min-width: 20rem; */
+  /* max-width: 30rem;   */
   width: 100%;
 }
 
@@ -163,6 +195,7 @@
 .error {
   color: red;
 }
+
 /* Add smooth transitions for inputs */
 .inventoryTable input,
 .reactSelect {
@@ -205,4 +238,30 @@
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 6px;
+}
+
+
+
+/* .inventoryTable td {
+  position: relative;
+  height: 100%;
+  vertical-align: middle;
+} */
+
+.inventoryTable input,
+.reactSelect {
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.4rem 0;
+}
+
+.inventoryTable td:not(:nth-child(1)):not(:nth-child(2)):not(:last-child) {
+  width: 10rem;
+}
+
+.inventoryTable td:nth-child(2),
+.inventoryTable td:nth-child(4)
+ {
+  min-width: 20rem;
 }
