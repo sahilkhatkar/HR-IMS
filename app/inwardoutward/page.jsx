@@ -153,7 +153,7 @@ export default function InventoryForm() {
 
     const allItemOptions = masterData?.map((item) => ({
         value: item.item_code,
-        label: `${item.item_code} - ${item.description}`,
+        label: `${item.description} - ${item.item_code}`,
     }));
 
     return (
