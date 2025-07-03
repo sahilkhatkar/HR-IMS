@@ -35,6 +35,12 @@ const userSlice = createSlice({
         item.item_code === updatedItem.item_code ? updatedItem : item
       );
     },
+    addItemsToMasterData: (state, action) => {
+
+      console.log("Master::",state.masterData);
+
+      state.masterData.push(...action.payload);
+    },
   },
 
   extraReducers: (builder) => {
@@ -70,4 +76,4 @@ const userSlice = createSlice({
 });
 
 export default userSlice.reducer;
-export const { updateMasterItem } = userSlice.actions;
+export const { updateMasterItem, addItemsToMasterData } = userSlice.actions;

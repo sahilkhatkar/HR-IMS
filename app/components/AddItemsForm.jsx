@@ -5,6 +5,9 @@ import CreatableSelect from 'react-select/creatable';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './AddItemsForm.module.css';
 import PreviewModal from './PreviewModal';
+import { useSelector, useDispatch } from 'react-redux';
+import { generateUniqueItemCodes } from './generateItemCodes';
+import { addItemsToMasterData } from '../../store/slices/gSheetData'; // Adjust path
 
 const scriptURL = "https://script.google.com/macros/s/AKfycbxDcz6zbGv2o5R2us9Sm9UbrX8OCbO7LakqV_0rf6GaxfL9vFmDyDZKnrv9ZVca8p9oLA/exec";
 
@@ -33,6 +36,10 @@ export default function AddItemsForm({
   plant_nameOptions = [],
   seasonOptions = [],
 }) {
+
+  const dispatch = useDispatch();
+
+
   const [rows, setRows] = useState([createEmptyRow()]);
   const [showToast, setShowToast] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,6 +68,14 @@ export default function AddItemsForm({
     seasonOptions,
     unitOptions,
   ]);
+
+
+  const masterData = useSelector((state) => state.masterData); // adjust based on your store
+  const existingCodes = new Set(
+    masterData?.items?.map((item) => item.item_code).filter(Boolean) || []
+  );
+
+
 
   const handleChange = useCallback((idx, field, value) => {
     setRows((prevRows) => {
@@ -112,15 +127,23 @@ export default function AddItemsForm({
       return;
     }
 
+    console.log({ items });
+
+    const itemsWithCodes = generateUniqueItemCodes(items, existingCodes);
+
+    console.log({ items: itemsWithCodes });
 
     try {
       setIsSubmitting(true);
       const res = await fetch(scriptURL, {
         method: 'POST',
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ items: itemsWithCodes }),
       });
 
       if (!res.ok) throw new Error('Failed to submit');
+
+      // ✅ Add new items to Redux
+      dispatch(addItemsToMasterData(itemsWithCodes));
 
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
@@ -134,7 +157,7 @@ export default function AddItemsForm({
       setIsSubmitting(false);
     }
 
-    console.log("Items: ",items);
+    console.log("Items: ", items);
 
   };
 
