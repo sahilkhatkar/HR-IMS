@@ -36,25 +36,25 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${inter.className}
        `}
-        // style={{ display: "flex", maxHeight: "100vh" }}
-       >
+      // style={{ display: "flex", maxHeight: "100vh" }}
+      >
 
-<Suspense fallback={null}>
+        <Suspense fallback={null}>
 
-        {/* ${styles.bodyCss} ${geistSans.variable} ${geistMono.variable} */}
-        <SessionProvider>
-          <StoreProvider>
-            <GlobalWrapper>
+          {/* ${styles.bodyCss} ${geistSans.variable} ${geistMono.variable} */}
+          <SessionProvider>
+            <StoreProvider>
+              <GlobalWrapper>
 
-              <AppLayoutClient>
-                {/* <main className={styles.mainContent}> */}
+                <AppLayoutClient>
+                  {/* <main className={styles.mainContent}> */}
                   {children}
-                {/* </main> */}
-              </AppLayoutClient>
+                  {/* </main> */}
+                </AppLayoutClient>
 
-            </GlobalWrapper>
-          </StoreProvider>
-        </SessionProvider></Suspense>
+              </GlobalWrapper>
+            </StoreProvider>
+          </SessionProvider></Suspense>
       </body>
     </html>
   );

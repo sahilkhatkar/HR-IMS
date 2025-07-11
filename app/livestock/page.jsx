@@ -1,8 +1,13 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { FaEdit, FaInfoCircle, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
-import styles from '../components/imsStyles.module.css';
+import {
+    FaInfoCircle,
+    FaSort,
+    FaSortUp,
+    FaSortDown
+} from 'react-icons/fa';
+import styles from './page.module.css';
 import EditModal from '../components/EditModal';
 import InfoModal from '../components/InfoModal';
 import { useState, useMemo } from 'react';
@@ -12,6 +17,25 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ITEMS_PER_PAGE = 10;
+
+// Column configurations
+const COLUMNS_DISPLAY = [
+    { key: 'description', label: 'Description' },
+    { key: 'unit', label: 'Unit' },
+    { key: 'plant_name', label: 'Plant' },
+    { key: 'max_level', label: 'Max Level' },
+    { key: 'unplanned_stock_qty', label: 'Unplanned Stock' },
+    { key: 'planned_stock_qty', label: 'Planned Stock Qty' },
+    { key: 'pending_purchase_qty', label: 'Pending Purchase Qty' },
+];
+
+const COLUMNS_FILTERABLE = [
+    { key: 'pack_size', label: 'Pack Size' },
+    { key: 'pack_type', label: 'Pack Type' },
+    { key: 'unit', label: 'Unit' },
+    { key: 'plant_name', label: 'Plant' },
+    { key: 'max_level', label: 'Max Level' },
+];
 
 export default function Livestock() {
     const { stockData, loading2, error2 } = useSelector((state) => state.data);
@@ -24,8 +48,6 @@ export default function Livestock() {
     const [currentPage, setCurrentPage] = useState(1);
     const [filters, setFilters] = useState({});
 
-    const handleEdit = (item) => setSelectedItem(item);
-
     const handleSort = (key) => {
         const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
         setSortConfig({ key, direction });
@@ -35,19 +57,6 @@ export default function Livestock() {
         if (sortConfig.key !== key) return <FaSort />;
         return sortConfig.direction === 'asc' ? <FaSortUp /> : <FaSortDown />;
     };
-
-    const COLUMNS = [
-        { key: 'item_code', label: 'Item Code', filterable: false },
-        { key: 'description', label: 'Description', filterable: false },
-        { key: 'pack_size', label: 'Pack Size', filterable: true },
-        { key: 'pack_type', label: 'Pack Type', filterable: true },
-        { key: 'unit', label: 'Unit', filterable: true },
-        { key: 'plant_name', label: 'Plant', filterable: true },
-        { key: 'max_level', label: 'Max Level', filterable: true },
-        { key: 'stock_qty', label: 'Stock Qty', filterable: false },
-        { key: 'unplanned_stock_qty', label: 'Unplanned Stock', filterable: false },
-        { key: 'pending_purchase_qty', label: 'Pending Purchase Qty', filterable: false },
-    ];
 
     const filteredData = useMemo(() => {
         if (!Array.isArray(stockData)) return [];
@@ -82,9 +91,8 @@ export default function Livestock() {
     const startIndex = (currentPage - 1) * rowsPerPage;
     const currentItems = sortedData.slice(startIndex, startIndex + rowsPerPage);
 
-    const getUniqueValues = (key) => Array.from(
-        new Set((Array.isArray(stockData) ? stockData : []).map((item) => item[key]).filter(Boolean))
-    ).sort();
+    const getUniqueValues = (key) =>
+        Array.from(new Set((Array.isArray(stockData) ? stockData : []).map((item) => item[key]).filter(Boolean))).sort();
 
     if (loading2) return <p>Loading stock data...</p>;
     if (error2) return <p>Error: {error2}</p>;
@@ -115,7 +123,7 @@ export default function Livestock() {
             </div>
 
             <div className={styles.filters}>
-                {COLUMNS.filter(col => col.filterable).map((col) => {
+                {COLUMNS_FILTERABLE.map((col) => {
                     const options = getUniqueValues(col.key).map(val => ({ value: val, label: val }));
                     const value = filters[col.key] && filters[col.key] !== 'all'
                         ? { value: filters[col.key], label: filters[col.key] }
@@ -156,12 +164,7 @@ export default function Livestock() {
                 })}
 
                 <div className={styles.controls}>
-                    <motion.div
-                        className={styles.rowsPerPage}
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                    >
+                    <div className={styles.rowsPerPage}>
                         <label>Rows:</label>
                         <select
                             value={rowsPerPage}
@@ -174,21 +177,15 @@ export default function Livestock() {
                                 <option key={num} value={num}>{num}</option>
                             ))}
                         </select>
-                    </motion.div>
+                    </div>
                 </div>
-
 
                 <div className={styles.totalStockQty}>
-                    <span>
-                        Total Stock
-                    </span>
+                    <span>Total Stock</span>
                     <p>
-                        {filteredData.reduce((sum, obj) => {
-                            return sum + (Number(obj.stock_qty) || 0); // safely convert to number
-                        }, 0)}
+                        {filteredData.reduce((sum, obj) => sum + (Number(obj.unplanned_stock_qty) || 0), 0)}
                     </p>
                 </div>
-
             </div>
 
             <motion.p
@@ -208,16 +205,11 @@ export default function Livestock() {
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }}
             >
-                <motion.table
-                    className={styles.animatedTable}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                >
+                <table className={styles.animatedTable}>
                     <thead>
                         <tr>
                             <th>#</th>
-                            {COLUMNS.map((col) => (
+                            {COLUMNS_DISPLAY.map((col) => (
                                 <th key={col.key} onClick={() => handleSort(col.key)}>
                                     {col.label} {getSortIcon(col.key)}
                                 </th>
@@ -234,24 +226,12 @@ export default function Livestock() {
                             </tr>
                         ) : (
                             currentItems.map((item, index) => (
-                                <motion.tr
-                                    key={item.item_code || index}
-                                    className={styles.tableRow}
-                                    whileHover={{ scale: 1.02 }}
-                                >
+                                <tr key={item.item_code || index} className={styles.tableRow}>
                                     <td>{startIndex + index + 1}</td>
-                                    {COLUMNS.map((col) => (
+                                    {COLUMNS_DISPLAY.map((col) => (
                                         <td key={col.key}>{item[col.key]}</td>
                                     ))}
                                     <td className={styles.actionsCell}>
-                                        {/* <button
-                                            className={styles.iconBtn}
-                                            onClick={() => handleEdit(item)}
-                                            aria-label="Edit"
-                                            title="Edit"
-                                        >
-                                            <FaEdit />
-                                        </button> */}
                                         <button
                                             className={styles.iconBtn}
                                             onClick={() => setInfoItem(item)}
@@ -261,11 +241,11 @@ export default function Livestock() {
                                             <FaInfoCircle />
                                         </button>
                                     </td>
-                                </motion.tr>
+                                </tr>
                             ))
                         )}
                     </tbody>
-                </motion.table>
+                </table>
 
                 <div className={styles.pagination}>
                     <button

@@ -39,7 +39,7 @@ export default function AboutPage() {
         </ul>
       </section>
 
-      <section className={styles.section}>
+      {/* <section className={styles.section}>
         <h2>💻 Built With</h2>
         <ul className={styles.techList}>
           <li>Next.js + React</li>
@@ -48,16 +48,16 @@ export default function AboutPage() {
           <li>React Toastify (alert system)</li>
           <li>CSS Modules for scoped styling</li>
         </ul>
-      </section>
+      </section> */}
 
-      <section className={styles.section}>
+      {/* <section className={styles.section}>
         <h2>🙋 Developer</h2>
         <p>
           This IMS platform was designed and built by <strong>Team</strong>, with a focus on
           usability, performance, and flexibility. It aims to serve small and medium-sized teams
           looking for a lean inventory management alternative.
         </p>
-      </section>
+      </section> */}
 
       <section className={styles.section}>
         <h2>📬 Contact</h2>

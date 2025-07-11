@@ -41,6 +41,12 @@
   max-width: 200px;
 }
 
+.animatedTable th:nth-child(2),
+.animatedTable td:nth-child(2) {
+  min-width: 300px;
+  white-space: wrap;
+}
+
 .animatedTable th {
   /* background-color: #f7f7f7; */
   color: #444;

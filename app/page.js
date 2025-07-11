@@ -35,7 +35,8 @@ export default function Header() {
     <>
       <div className={styles.header}>
         <div className={styles.left}>
-          {user ? `Hi, ${user.name?.split(' ')[0] || 'User'}` : 'Welcome'}
+          {user ? `Hi, ${user.name?.split(' ')[0].charAt(0).toUpperCase() + user.name?.split(' ')[0].slice(1).toLowerCase()
+            || 'User'}` : 'Welcome'}
         </div>
 
         <div className={styles.right} ref={menuRef}>
