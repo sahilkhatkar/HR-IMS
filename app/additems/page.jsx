@@ -8,7 +8,8 @@ export default function AddItemsPage() {
     // const { data } = useData();
 
     // Using REDUX Toolkit
-    const { masterData, loading1, error1 } = useSelector((state) => state.data);
+    // const { masterData, loading1, error1 } = useSelector((state) => state.data);
+    const { masterData, loading1, error1 } = useSelector((state) => state.masterData);
     // End
 
     const getUniqueValues = (field) => {

@@ -35,10 +35,9 @@ const userSlice = createSlice({
         item.item_code === updatedItem.item_code ? updatedItem : item
       );
     },
+
     addItemsToMasterData: (state, action) => {
-
       console.log("Master::",state.masterData);
-
       state.masterData.push(...action.payload);
     },
   },

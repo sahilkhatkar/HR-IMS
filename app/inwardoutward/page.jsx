@@ -1,6 +1,6 @@
 'use client';
 import { useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
 // import Select from 'react-select';
 import styles from './page.module.css';
@@ -8,15 +8,17 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import dynamic from 'next/dynamic';
+import { addResponseToResponses } from '../../store/slices/formResponsesSlice';
 const Select = dynamic(() => import('react-select'), { ssr: false });
-
 
 
 const script_live_stock_url = "https://script.google.com/macros/s/AKfycbxnnkkjOo5tAHHIKwucr6GrB2pBY4S0PrLUFBMwDkPaImpeGuRvFCDadzfAiq-E_LEeag/exec"
 
 export default function InventoryForm() {
 
-    const { masterData, loading1, error1 } = useSelector((state) => state.data);
+    const dispatch = useDispatch();
+
+    const { masterData, loading, error } = useSelector((state) => state.masterData);
     const [isInward, setIsInward] = useState(true);
     const [rows, setRows] = useState([createNewRow()]);
     const [inputValue, setInputValue] = useState('');
@@ -115,25 +117,41 @@ export default function InventoryForm() {
         setIsSubmitting(true); // 🟢 Start spinner + disable button
 
         const payload = {
-            formType: isInward ? 'inward' : 'outward',
+            formType: isInward ? 'Inward' : 'Outward',
             date: formatDateForPayload(date),
             entries: rows,
         };
 
+        // const flatArray = payload.entries.map(entry => ({
+        //     ...entry,
+        //     formType: payload.formType,
+        //     date: payload.date
+        // }));
+
         const flatArray = payload.entries.map(entry => ({
-            ...entry,
-            formType: payload.formType,
-            date: payload.date
+            item_code: entry.itemCode,
+            stock_qty: isInward ? entry.qty : -Math.abs(entry.qty),
+            plant_name: entry.plant,
+            sales_order: entry.saleOrder,
+            remarks: entry.remarks,
+            form_type: payload.formType,
+            date: payload.date,
+            timestamp: new Date().toLocaleString('en-GB').replace(',', ''),
         }));
 
+
         try {
-            const response = await fetch(script_live_stock_url, {
+            const response = await fetch('/api/stock-in-out-entries', {
                 method: 'POST',
-                body: JSON.stringify(flatArray),
+                // body: JSON.stringify(flatArray),
+                body: JSON.stringify({ items: flatArray }),
             });
 
             if (response.ok) {
                 toast.success('Inventory submitted successfully!');
+
+                dispatch(addResponseToResponses(flatArray));
+
                 setRows([createNewRow()]); // ✅ Clear after success
                 setFormErrors([]);
             } else {
@@ -148,8 +166,8 @@ export default function InventoryForm() {
     };
 
 
-    // if (loading1) return <div className={styles.loading}>Loading...</div>;
-    if (error1) return <div className={styles.error}>Error: {error1}</div>;
+    // if (loading) return <div className={styles.loading}>Loading...</div>;
+    if (error) return <div className={styles.error}>Error: {error}</div>;
 
     const allItemOptions = masterData?.map((item) => ({
         value: item.item_code,

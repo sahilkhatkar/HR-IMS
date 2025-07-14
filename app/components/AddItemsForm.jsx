@@ -7,9 +7,11 @@ import styles from './AddItemsForm.module.css';
 import PreviewModal from './PreviewModal';
 import { useSelector, useDispatch } from 'react-redux';
 import { generateUniqueItemCodes } from './generateItemCodes';
-import { addItemsToMasterData } from '../../store/slices/gSheetData'; // Adjust path
+import toast from 'react-hot-toast';
+import { addItemsToMasterData } from '../../store/slices/masterDataSlice'; // Adjust path
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbxDcz6zbGv2o5R2us9Sm9UbrX8OCbO7LakqV_0rf6GaxfL9vFmDyDZKnrv9ZVca8p9oLA/exec";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const fields = {
   description: { label: 'Description', type: 'text', required: true },
@@ -36,16 +38,11 @@ export default function AddItemsForm({
   plant_nameOptions = [],
   seasonOptions = [],
 }) {
-
   const dispatch = useDispatch();
 
-
   const [rows, setRows] = useState([createEmptyRow()]);
-  const [showToast, setShowToast] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [showPreview, setShowPreview] = useState(false);
-
 
   const getSortedOptions = useCallback((options) =>
     [...options].map((val) => (val ? { label: val, value: val } : val)), []);
@@ -69,12 +66,12 @@ export default function AddItemsForm({
     unitOptions,
   ]);
 
-
-  const masterData = useSelector((state) => state.masterData); // adjust based on your store
+  const masterData = useSelector((state) => state.masterData);
   const existingCodes = new Set(
-    masterData?.items?.map((item) => item.item_code).filter(Boolean) || []
+    masterData?.masterData?.map((item) => item.item_code).filter(Boolean) || []
   );
 
+  // console.log('Existing Codes:', existingCodes, masterData.masterData);
 
 
   const handleChange = useCallback((idx, field, value) => {
@@ -94,8 +91,6 @@ export default function AddItemsForm({
     const formData = new FormData(e.target);
     const itemMap = new Map();
 
-    console.log(formData)
-
     for (let [key, value] of formData.entries()) {
       const match = key.match(/^rows\[(\d+)\]\.(.+)$/);
       if (!match) continue;
@@ -109,7 +104,7 @@ export default function AddItemsForm({
     );
 
     if (!items.length) {
-      alert("Please fill at least one item with a description.");
+      toast.error("Please fill at least one item with a description.");
       return;
     }
 
@@ -123,42 +118,47 @@ export default function AddItemsForm({
     });
 
     if (missingFields.length > 0) {
-      alert(`Please fill all required fields:\n\n${missingFields.join('\n')}`);
+      toast.error(`Missing fields:\n${missingFields.join('\n')}`);
       return;
     }
 
-    console.log({ items });
-
     const itemsWithCodes = generateUniqueItemCodes(items, existingCodes);
-
-    console.log({ items: itemsWithCodes });
 
     try {
       setIsSubmitting(true);
-      const res = await fetch(scriptURL, {
+
+      const res = await fetch('/api/add-items', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items: itemsWithCodes }),
       });
 
-      if (!res.ok) throw new Error('Failed to submit');
+      const data = await res.json();
+      const createdCodes = data?.itemCodes || [];
 
-      // ✅ Add new items to Redux
+      if (!data.success) throw new Error('Failed to submit');
+
       dispatch(addItemsToMasterData(itemsWithCodes));
 
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      // toast.success(`Created item code${createdCodes.length > 1 ? 's' : ''}:\n${createdCodes.join('\n')}`);
+      createdCodes.forEach((code, index) => {
+        setTimeout(() => {
+          toast.success(`Created item code: ${code}`, {
+            autoClose: 3000,
+          });
+        }, index * 500); // 200ms delay between each toast
+      });
+
       setRows([createEmptyRow()]);
 
-      console.log(res);
-
     } catch (err) {
-      alert('Error submitting: ' + err.message);
+      toast.error('Error submitting: ' + err.message, {
+        autoClose: 5000,
+      });
+      console.error('Submission error:', err);
     } finally {
       setIsSubmitting(false);
     }
-
-    console.log("Items: ", items);
-
   };
 
   const customSelectStyles = useMemo(() => ({
@@ -185,9 +185,7 @@ export default function AddItemsForm({
               {fieldKeys.map((field) => (
                 <th key={field}>
                   {fields[field].label}
-                  {fields[field].required && (
-                    <span className={styles.required}> *</span>
-                  )}
+                  {fields[field].required && <span className={styles.required}> *</span>}
                 </th>
               ))}
               <th>Remove</th>
@@ -269,7 +267,6 @@ export default function AddItemsForm({
         >
           {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>
-
         <button
           type="button"
           className={styles.previewBtn}
@@ -277,23 +274,7 @@ export default function AddItemsForm({
         >
           👁 Preview
         </button>
-
       </div>
-
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.5 }}
-            className={styles.toast}
-          >
-            ✅ Items submitted!
-          </motion.div>
-        )}
-      </AnimatePresence>
-
 
       {showPreview && (
         <PreviewModal
@@ -304,6 +285,15 @@ export default function AddItemsForm({
         />
       )}
 
+      {/* ✅ React Toastify Container */}
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnHover
+        draggable
+      />
     </form>
   );
 }

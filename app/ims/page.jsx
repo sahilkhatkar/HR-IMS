@@ -15,7 +15,8 @@ import 'react-toastify/dist/ReactToastify.css';
 const ITEMS_PER_PAGE = 10;
 
 export default function AnimatedTable() {
-  const { masterData, loading1, error1 } = useSelector((state) => state.data);
+  // const { masterData, loading, error } = useSelector((state) => state.data);
+  const { masterData, loading, error } = useSelector((state) => state.masterData);
 
   const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
   const [rowsPerPage, setRowsPerPage] = useState(ITEMS_PER_PAGE);
@@ -82,8 +83,8 @@ export default function AnimatedTable() {
   const startIndex = (currentPage - 1) * rowsPerPage;
   const currentItems = sortedData.slice(startIndex, startIndex + rowsPerPage);
 
-  if (loading1) return <p>Loading masterData data...</p>;
-  if (error1) return <p>Error: {error1}</p>;
+  if (loading) return <p>Loading masterData data...</p>;
+  if (error) return <p>Error: {error}</p>;
   if (!masterData) return <p>No data found.</p>;
 
   return (
@@ -243,9 +244,12 @@ export default function AnimatedTable() {
                     <td key={col.key}>{item[col.key]}</td>
                   ))}
                   <td className={styles.actionsCell}>
-                    <button className={styles.iconBtn} onClick={() => setSelectedItem(item)} title="Edit">
+
+
+                    {/* Edit button */}
+                    {/* <button className={styles.iconBtn} onClick={() => setSelectedItem(item)} title="Edit">
                       <FaEdit />
-                    </button>
+                    </button> */}
                     <button className={styles.iconBtn} onClick={() => setInfoItem(item)} title="View Details">
                       <FaInfoCircle />
                     </button>

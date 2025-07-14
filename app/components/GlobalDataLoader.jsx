@@ -4,19 +4,95 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchMasterData, fetchStockData } from '../../store/slices/gSheetData';
+import { setSheetData } from '../../store/slices/masterDataSlice';
+import { setLiveStockData } from '../../store/slices/liveStockDataSlice';
+import { setFormResponses } from '../../store/slices/formResponsesSlice';
+
 
 export default function GlobalWrapper({ children }) {
   const dispatch = useDispatch();
-  const { masterData, stockData } = useSelector((state) => state.data);
+  // const { stockData } = useSelector((state) => state.data);
+  const { masterData } = useSelector((state) => state.masterData);
+  const { stockData } = useSelector((state) => state.liveStockData);
+  const { formResponses } = useSelector((state) => state.formResponses);
 
   useEffect(() => {
-    if (!masterData) {
-      dispatch(fetchMasterData());
+
+
+    const fetchMasterData = async () => {
+      try {
+        const res = await fetch(`/api/master-data`);
+        if (!res.ok) throw new Error('Failed to fetch data');
+
+        const data = await res.json();
+        // console.log('Fetched sheet data:', data);
+
+        dispatch(setSheetData(data));
+
+      } catch (err) {
+        console.error('Error fetching sheet data:', err);
+      }
+    };
+
+    // console.log(masterData.length, "Master Data Length");
+    if (masterData.length === 0) {
+      fetchMasterData();
     }
-    if (!stockData) {
-      dispatch(fetchStockData());
+
+    const fetchStockData = async () => {
+      try {
+        const res = await fetch(`/api/live-stock-data`);
+        if (!res.ok) throw new Error('Failed to fetch data');
+
+        const data = await res.json();
+        // console.log('Fetched sheet data:', data);
+
+        dispatch(setLiveStockData(data));
+
+      } catch (err) {
+        console.error('Error fetching sheet data:', err);
+      }
+    };
+
+    console.log(stockData.length, "Stock Data Length");
+    if (stockData.length === 0) {
+      fetchStockData();
     }
-  }, [dispatch, masterData, stockData]);
+
+    const fetchFormResponses = async () => {
+      try {
+        const res = await fetch(`/api/form-responses-stock-data`);
+        if (!res.ok) throw new Error('Failed to fetch data');
+
+        const data = await res.json();
+        // console.log('Fetched sheet data:', data);
+
+        dispatch(setFormResponses(data));
+
+      } catch (err) {
+        console.error('Error fetching sheet data:', err);
+      }
+    };
+
+    console.log(formResponses.length, "Form Responses Length");
+    if (formResponses.length === 0) {
+      fetchFormResponses();
+    }
+
+    //   if (!masterData || masterData.length === 0) {
+    //   dispatch(fetchMasterData());
+    // }
+
+    // if (!masterData) {
+    //   dispatch(fetchMasterData());
+    // }
+    // if (!stockData) {
+    //   dispatch(fetchStockData());
+    // }
+  }, [dispatch, masterData
+    // , stockData
+
+  ]);
 
   return <>{children}</>;
 }

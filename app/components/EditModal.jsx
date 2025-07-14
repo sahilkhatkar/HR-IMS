@@ -5,7 +5,7 @@ import styles from './EditModal.module.css';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
-import { updateMasterItem } from '../../store/slices/gSheetData'; // adjust this path
+import { updateMasterItem } from '../../store/slices/masterDataSlice'; // adjust this path
 
 
 // const scriptURL = "https://script.google.com/macros/s/AKfycbx-qJ_5XoQbBW7I30RF4KEFPMtqt6MZcUBvdNV1l4I4KUYktMCUbNb9gBrjZ-VlY3cH/exec";
@@ -52,19 +52,31 @@ export default function EditModal({ item, onClose }) {
 
 
     try {
-      const response = await fetch(scriptURL, {
+
+      // const response = await fetch(scriptURL, {
+      //   method: 'POST',
+      //   body: JSON.stringify({
+      //     ...formObject, modify: true
+      //   }),
+      // });
+
+
+      const response = await fetch('/api/update-item', {
         method: 'POST',
-        body: JSON.stringify({
-          ...formObject, modify: true
-        }),
+        body: JSON.stringify(formObject),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
+
+      console.log("Response from server:", response);
 
       if (!response.ok) throw new Error('Failed to submit form');
 
       // Dispatch local Redux update
       dispatch(updateMasterItem(formObject));
 
-      toast.success('Item saved successfully! ✅');
+      toast.success('Item saved successfully!');
       onClose(); // Optionally close modal
 
 
@@ -118,6 +130,7 @@ export default function EditModal({ item, onClose }) {
                     value={value}
                     onChange={(e) => handleChange(key, e.target.value)}
                     name={key}
+                    readOnly={key === 'item_code'}
                   />
                 )}
               </div>

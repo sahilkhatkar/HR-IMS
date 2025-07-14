@@ -16,16 +16,17 @@ import { motion } from 'framer-motion';
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, ArcElement);
 
 export default function HomeChart() {
-    const { stockData = [], loading2, error2 } = useSelector((state) => state.data);
+    // const { stockData = [], loading, error } = useSelector((state) => state.data);
+    const { stockData, loading, error } = useSelector((state) => state.liveStockData);
 
-    if (loading2) return <div style={{ padding: '2rem' }}>Loading charts...</div>;
-    if (error2) return <div style={{ padding: '2rem', color: 'red' }}>Error loading data: {error2}</div>;
-    if (!stockData.length) return <div style={{ padding: '2rem' }}>No live stock data available.</div>;
+    if (loading) return <div style={{ padding: '2rem' }}>Loading charts...</div>;
+    if (error) return <div style={{ padding: '2rem', color: 'red' }}>Error loading data: {error}</div>;
+    if (!stockData?.length) return <div style={{ padding: '2rem' }}>No live stock data available.</div>;
 
     // ✅ Bar Chart: Quantity per Plant
     const plantQtyMap = stockData.reduce((acc, curr) => {
         const plant_name = curr.plant_name || 'Unknown';
-        acc[plant_name] = (acc[plant_name] || 0) + (parseFloat(curr.stock_qty) || 0);
+        acc[plant_name] = (acc[plant_name] || 0) + (parseFloat(curr.unplanned_stock_qty) || 0);
         return acc;
     }, {});
 

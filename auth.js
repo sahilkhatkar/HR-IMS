@@ -24,8 +24,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // console.log("Signing in with:", credentials);
 
         if (
-          credentials.username === "admin" &&
-          credentials.password === "mis@admin"
+          credentials.username === "test-user" &&
+          credentials.password === "mis@systems"
         ) {
           // console.log("Success, user authenticated");
           return {

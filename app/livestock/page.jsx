@@ -38,7 +38,7 @@ const COLUMNS_FILTERABLE = [
 ];
 
 export default function Livestock() {
-    const { stockData, loading2, error2 } = useSelector((state) => state.data);
+    const { stockData, loading, error } = useSelector((state) => state.liveStockData);
 
     const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
     const [rowsPerPage, setRowsPerPage] = useState(ITEMS_PER_PAGE);
@@ -94,8 +94,8 @@ export default function Livestock() {
     const getUniqueValues = (key) =>
         Array.from(new Set((Array.isArray(stockData) ? stockData : []).map((item) => item[key]).filter(Boolean))).sort();
 
-    if (loading2) return <p>Loading stock data...</p>;
-    if (error2) return <p>Error: {error2}</p>;
+    if (loading) return <p>Loading stock data...</p>;
+    if (error) return <p>Error: {error}</p>;
     if (!stockData || !Array.isArray(stockData)) return <p>No data found.</p>;
 
     return (

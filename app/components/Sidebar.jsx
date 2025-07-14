@@ -12,6 +12,7 @@ import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { FiLogOut } from 'react-icons/fi';
 import { BiTransferAlt } from "react-icons/bi";
+import { BsBoxSeam } from 'react-icons/bs';
 
 
 export default function Sidebar() {
@@ -62,6 +63,7 @@ export default function Sidebar() {
                             <Link href="/livestock" className={`${styles.link} ${pathname === "/livestock" ? styles.active : ""}`}><FaBoxes/> Live Stock</Link>
                             <Link href="/additems" className={`${styles.link} ${pathname === "/additems" ? styles.active : ""}`}><AiOutlinePlusCircle /> Add Item</Link>
                             <Link href="/inwardoutward" className={`${styles.link} ${pathname === "/inwardoutward" ? styles.active : ""}`}><BiTransferAlt /> In - Out</Link>
+                            <Link href="/form-responses" className={`${styles.link} ${pathname === "/form-responses" ? styles.active : ""}`}><BsBoxSeam size={20} title="Form Responses" /> Stock entries</Link>
                             {/* <Link href="/dailyconsumption" className={`${styles.link} ${pathname === "/dailyconsumption" ? styles.active : ""}`}>Daily</Link> */}
                             <Link href="/about" className={`${styles.link} ${pathname === "/about" ? styles.active : ""}`} style={{marginTop:"5rem"}}><AiOutlineInfoCircle /> About</Link>
                             <Link href="/logout" className={`${styles.link} ${pathname === "/logout" ? styles.active : ""}`}><FiLogOut /> Log out</Link>

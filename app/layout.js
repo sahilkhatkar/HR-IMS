@@ -8,6 +8,7 @@ import GlobalWrapper from './components/GlobalDataLoader';
 import { SessionProvider } from "next-auth/react";
 import { Suspense } from 'react';
 import AppLayoutClient from "./AppLayoutClient";
+import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -45,6 +46,8 @@ export default function RootLayout({ children }) {
           <SessionProvider>
             <StoreProvider>
               <GlobalWrapper>
+
+                <Toaster position="top-right" />
 
                 <AppLayoutClient>
                   {/* <main className={styles.mainContent}> */}
