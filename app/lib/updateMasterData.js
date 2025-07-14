@@ -3,6 +3,9 @@ import { google } from 'googleapis';
 import path from 'path';
 import { promises as fs } from 'fs';
 
+// import dotenv from 'dotenv'; // <-- ADD THIS
+// dotenv.config({ path: '.env.local' }); // <-- LOAD ENV VARS
+
 const SHEET_ID = '1ySUFhzuW1AMobBuyWFgygCGBWIKO-yIm63RWjpbj-ws';
 const RANGE = 'IMS RM Master Packaging!A1:O'; // Adjust if needed
 
@@ -11,9 +14,21 @@ function toSnakeCase(str) {
 }
 
 export async function updateRowByItemCode(formData) {
-  const keyFile = path.resolve('./app/lib/credentials.json');
-  const content = await fs.readFile(keyFile, 'utf8');
-  const credentials = JSON.parse(content);
+  // const keyFile = path.resolve('./app/lib/credentials.json');
+  // const content = await fs.readFile(keyFile, 'utf8');
+  // const credentials = JSON.parse(content);
+
+
+  const base64Credentials = process.env.GOOGLE_CREDENTIALS;
+  if (!base64Credentials) {
+    throw new Error('GOOGLE_CREDENTIALS environment variable is missing');
+  }
+
+  const decoded = Buffer.from(base64Credentials, 'base64').toString('utf8');
+  const credentials = JSON.parse(decoded);
+
+
+
 
   const auth = new google.auth.GoogleAuth({
     credentials,

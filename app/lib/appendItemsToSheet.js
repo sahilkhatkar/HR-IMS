@@ -3,18 +3,31 @@ import { google } from 'googleapis';
 import path from 'path';
 import { promises as fs } from 'fs';
 
+// import dotenv from 'dotenv'; // <-- ADD THIS
+// dotenv.config({ path: '.env.local' }); // <-- LOAD ENV VARS
+
 const SHEET_ID = '1ySUFhzuW1AMobBuyWFgygCGBWIKO-yIm63RWjpbj-ws';
 const SHEET_NAME = 'IMS RM Master Packaging';
 
 function toTitleCase(str) {
   return str.replace(/_/g, ' ')
-            .replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1));
+    .replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1));
 }
 
 export async function appendItemsToSheet(items) {
-  const keyFile = path.resolve('./app/lib/credentials.json');
-  const content = await fs.readFile(keyFile, 'utf8');
-  const credentials = JSON.parse(content);
+  // const keyFile = path.resolve('./app/lib/credentials.json');
+  // const content = await fs.readFile(keyFile, 'utf8');
+  // const credentials = JSON.parse(content);
+
+
+  const base64Credentials = process.env.GOOGLE_CREDENTIALS;
+  if (!base64Credentials) {
+    throw new Error('GOOGLE_CREDENTIALS environment variable is missing');
+  }
+
+  const decoded = Buffer.from(base64Credentials, 'base64').toString('utf8');
+  const credentials = JSON.parse(decoded);
+
 
   const auth = new google.auth.GoogleAuth({
     credentials,
