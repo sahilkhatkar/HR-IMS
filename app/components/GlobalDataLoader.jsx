@@ -7,6 +7,7 @@ import { fetchMasterData, fetchStockData } from '../../store/slices/gSheetData';
 import { setSheetData } from '../../store/slices/masterDataSlice';
 import { setLiveStockData } from '../../store/slices/liveStockDataSlice';
 import { setFormResponses } from '../../store/slices/formResponsesSlice';
+import { setDamageStockResponses } from '../../store/slices/damageItemsEntriesSlice';
 
 
 export default function GlobalWrapper({ children }) {
@@ -15,6 +16,7 @@ export default function GlobalWrapper({ children }) {
   const { masterData } = useSelector((state) => state.masterData);
   const { stockData } = useSelector((state) => state.liveStockData);
   const { formResponses } = useSelector((state) => state.formResponses);
+  const { damageStockResponses } = useSelector((state) => state.damageStock);
 
   useEffect(() => {
 
@@ -25,7 +27,6 @@ export default function GlobalWrapper({ children }) {
         if (!res.ok) throw new Error('Failed to fetch data');
 
         const data = await res.json();
-        // console.log('Fetched sheet data:', data);
 
         dispatch(setSheetData(data));
 
@@ -34,7 +35,7 @@ export default function GlobalWrapper({ children }) {
       }
     };
 
-    // console.log(masterData.length, "Master Data Length");
+    console.log(masterData.length, "Master Data Length");
     if (masterData.length === 0) {
       fetchMasterData();
     }
@@ -77,6 +78,26 @@ export default function GlobalWrapper({ children }) {
     console.log(formResponses.length, "Form Responses Length");
     if (formResponses.length === 0) {
       fetchFormResponses();
+    }
+
+    const fetchDamageStockData = async () => {
+      try {
+        const res = await fetch(`/api/damage-stock-entries-data`);
+        if (!res.ok) throw new Error('Failed to fetch data');
+
+        const data = await res.json();
+        // console.log('Fetched sheet data:', data);
+
+        dispatch(setDamageStockResponses(data));
+
+      } catch (err) {
+        console.error('Error fetching sheet data:', err);
+      }
+    };
+
+    console.log(damageStockResponses.length, "Damage Stock Responses Length");
+    if (damageStockResponses.length === 0) {
+      fetchDamageStockData();
     }
 
     //   if (!masterData || masterData.length === 0) {
