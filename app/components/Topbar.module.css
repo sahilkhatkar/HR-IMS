@@ -1,9 +1,3 @@
-:root {
-  --topbar-height: 60px;
-  --topbar-shadow: rgba(0, 0, 0, 0.03);
-  --logout-bg: transparent;
-  --logout-hover: var(--hover-bg);
-}
 
 /* ====== Topbar Layout ====== */
 .topbar {

@@ -196,6 +196,15 @@
   --body-background: rgb(66, 66, 66); */
 
   --layout-margin: 1rem;
+
+
+
+
+
+  --topbar-height: 60px;
+  --topbar-shadow: rgba(0, 0, 0, 0.03);
+  --logout-bg: transparent;
+  --logout-hover: var(--hover-bg);
 }
 
 
