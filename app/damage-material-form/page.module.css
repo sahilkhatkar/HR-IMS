@@ -2,8 +2,8 @@
 .inventoryContainer {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  padding: 1.5rem;
+  flex: 1;
+  padding: 1rem;
   overflow: hidden;
   max-width: 1600px;
 }
@@ -71,7 +71,6 @@
   background: white;
   border-radius: 12px;
   padding: 1rem;
-  margin-block: 0.5rem;
   flex-grow: 1;
   flex-shrink: 1;
 }
@@ -84,6 +83,7 @@
 
 .inventoryTable th,
 .inventoryTable td {
+  font-size: 0.875rem;
   padding: 0.4rem 0.6rem;
   vertical-align: middle;
   text-align: left;

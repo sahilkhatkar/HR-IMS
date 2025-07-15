@@ -4,6 +4,9 @@
 
 .mainContent {
 
+    display: flex;
+    flex-direction: column;
+
     /* border: 2px solid red; */
     flex: 1 1 auto;
     /* padding: 1rem 1rem 1rem 0; */

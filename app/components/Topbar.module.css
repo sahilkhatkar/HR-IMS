@@ -1,0 +1,128 @@
+:root {
+  --topbar-height: 60px;
+  --topbar-shadow: rgba(0, 0, 0, 0.03);
+  --logout-bg: transparent;
+  --logout-hover: var(--hover-bg);
+}
+
+/* ====== Topbar Layout ====== */
+.topbar {
+  height: var(--topbar-height);
+  background: white;
+  color: var(--color-primary-blue);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  font-family: var(--font-family);
+
+  /* Glassmorphism */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-clip: padding-box;
+  box-shadow: 0 2px 6px var(--topbar-shadow);
+}
+
+/* ====== Left Section ====== */
+.left {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* ====== Right Section ====== */
+.right {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ====== Avatar ====== */
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid var(--primary-light, #ccc);
+}
+
+/* ====== Dropdown ====== */
+.dropdown {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: var(--card-bg, #fff);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  width: 220px;
+  text-align: left;
+  z-index: 20;
+}
+
+.name {
+  font-weight: 600;
+  color: var(--text, #111);
+  margin-bottom: 4px;
+}
+
+.email {
+  font-size: 0.85rem;
+  color: var(--text, #555);
+  opacity: 0.8;
+  margin-bottom: 12px;
+}
+
+/* ====== Logout Button (Dropdown) ====== */
+.logout {
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.logout:hover {
+  background: #e03131;
+}
+
+/* ====== Header Fallback Style (e.g. Loading...) ====== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: #fff;
+  border-bottom: 1px solid #eaeaea;
+  position: relative;
+  z-index: 10;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 768px) {
+  .left {
+    margin-left: 3rem;
+    font-size: 1.2rem;
+  }
+
+  .logout {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .dropdown {
+    width: 200px;
+  }
+}

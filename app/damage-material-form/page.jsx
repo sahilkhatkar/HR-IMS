@@ -144,7 +144,7 @@ export default function DamageItemForm() {
                     e.preventDefault(); // ⛔ Prevent form submission via Enter key
                 }
             }}>
-            <h2 className={styles.heading}>Damage Material Form</h2>
+            {/* <h2 className={styles.heading}>Damage Material Form</h2> */}
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}

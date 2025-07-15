@@ -13,6 +13,7 @@
     /* background: linear-gradient(180deg, #fdfdfd, seagreen); */
     background: #073b4c;
     background: var(--color-col1);
+    /* background: var(--color-primary-green); */
     border-right: 1px solid var(--color-boundary);
 
     transform: translateX(-100%);
@@ -70,7 +71,6 @@
 
 .link {
     position: relative;
-    font-size: 1.05rem;
     text-decoration: none;
     color: var(--color-text-col1);
     padding-left: .2rem;

@@ -12,6 +12,7 @@ import { addItemsToMasterData } from '../../store/slices/masterDataSlice'; // Ad
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { VscDiffAdded } from "react-icons/vsc";
 
 const fields = {
   description: { label: 'Description', type: 'text', required: true },
@@ -127,7 +128,7 @@ export default function AddItemsForm({
     try {
       setIsSubmitting(true);
 
-      const res = await fetch('/api/add-items', {
+      const res = await fetch('/api/master-data', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items: itemsWithCodes }),
@@ -175,7 +176,10 @@ export default function AddItemsForm({
 
   return (
     <form onSubmit={handleSubmit} className={styles.pageContainer}>
-      <h2 className={styles.heading}>Add New Items</h2>
+      <h2 className={styles.heading}>
+        {/* <VscDiffAdded /> */}
+       Master IMS
+       </h2>
 
       <div className={styles.tableWrapper}>
         <table className={styles.table}>

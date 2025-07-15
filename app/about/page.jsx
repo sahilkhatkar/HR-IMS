@@ -13,7 +13,7 @@ export default function AboutPage() {
       exit={{ opacity: 0 }}
     >
       <header className={styles.hero}>
-        <h1 className={styles.title}>About Inventory Management System</h1>
+        <h1 className={styles.title}>Inventory Management System</h1>
         <p className={styles.subtitle}>
           A streamlined solution to track, manage, and optimize your inventory operations from a
           single, intuitive dashboard.

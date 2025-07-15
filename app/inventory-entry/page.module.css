@@ -3,16 +3,17 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 1.5rem;
+  padding: 1rem;
   overflow: hidden;
-
+  gap: 1rem;
   max-width: 1600px;
+
+  flex: 1;
 }
 
 .heading {
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 1.2rem;
   color: var(--color-primary-blue);
 
   display: flex;
@@ -21,7 +22,7 @@
 }
 
 .subheading {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 
   /* margin-bottom: 1rem; */
   transition: color 0.3s ease;
@@ -67,7 +68,6 @@
 .actionButtons {
   display: flex;
   justify-content: flex-start;
-  margin-top: 1rem;
   gap: 1rem;
 }
 
@@ -77,7 +77,6 @@
   background: white;
   border-radius: 12px;
   padding: 1rem;
-  margin-block: 0.5rem;
   flex-grow: 1;
   flex-shrink: 1;
 }
@@ -106,6 +105,7 @@
 
 .inventoryTable th {
   padding: 0.5rem;
+  font-size: 0.875rem;
 }
 
 /* Specific Column Widths */
@@ -219,15 +219,9 @@
   margin-top: 0.25rem;
 }
 
-
-.datePickerWrapper {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
 .dateLabel {
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.875rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -235,7 +229,7 @@
 
 .dateInput {
   padding: 0.4rem 0.6rem;
-  font-size: 1rem;
+  font-size: 0.875rem;
   border: 1px solid #ccc;
   border-radius: 6px;
 }
@@ -289,4 +283,71 @@
 
 .submitting * {
   cursor: progress !important;
+}
+
+
+
+
+/* Toggle button */
+
+.toggleWrapper {
+  display: flex;
+  align-items: center;
+  font-family: inherit;
+}
+
+.toggleLabel {
+  font-weight: 500;
+  color: var(--text-color, #333);
+}
+
+/* Toggle Switch Container */
+.toggleSwitch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+}
+
+/* Hide the default checkbox */
+.toggleSwitch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Slider Track */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+/* Slider Handle */
+.slider::before {
+  position: absolute;
+  content: '';
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  top: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+/* When Checked */
+.toggleSwitch input:checked+.slider {
+  background-color: #4caf50;
+  /* iOS-style green */
+}
+
+.toggleSwitch input:checked+.slider::before {
+  transform: translateX(24px);
 }

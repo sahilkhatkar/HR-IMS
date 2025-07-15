@@ -78,7 +78,7 @@ export default function LoginPage() {
 
         <input
           type="email"
-          placeholder="Email"
+          placeholder="Username"
           className={styles.input}
           value={email}
           onChange={(e) => {

@@ -1,18 +1,19 @@
 .pageContainer {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  flex: 1;
+  gap: 1rem;
   /* or 100% if used inside a layout */
-  padding: 1.5rem;
+  padding: 1rem;
   font-family: 'Inter', sans-serif;
   overflow: hidden;
   /* prevent internal scroll */
 }
 
 .heading {
-  font-size: 1.8rem;
+  font-size: 1.75rem;
   font-weight: 700;
-  margin-bottom: 1.5rem;
+  /* margin-bottom: 1.5rem; */
   color: var(--color-primary-blue);
 }
 
@@ -30,7 +31,7 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
 }
 
 .table th,
@@ -77,10 +78,10 @@
 }
 
 .actions {
-  margin-top: 2rem;
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+  font-size: 1rem;
 }
 
 .addRowBtn,
@@ -88,10 +89,9 @@
   background: #1976d2;
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  border-radius: 8px;
   font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
   cursor: pointer;
   transition: background 0.3s ease;
 }
@@ -126,6 +126,6 @@
   padding: 0.5em 1em;
   border: none;
   border-radius: 5px;
-  margin-left: 1rem;
+  margin-left: 3rem;
   cursor: pointer;
 }

@@ -9,6 +9,7 @@ import { SessionProvider } from "next-auth/react";
 import { Suspense } from 'react';
 import AppLayoutClient from "./AppLayoutClient";
 import { Toaster } from 'react-hot-toast';
+import Topbar from "./components/Topbar";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -50,6 +51,7 @@ export default function RootLayout({ children }) {
                 <Toaster position="top-right" />
 
                 <AppLayoutClient>
+                  {/* <Topbar /> */}
                   {/* <main className={styles.mainContent}> */}
                   {children}
                   {/* </main> */}

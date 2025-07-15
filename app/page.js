@@ -9,11 +9,7 @@ import HomeChart from './components/HomeChart';
 
 
 export default function Header() {
-  const { data: session, status } = useSession();
-  const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef();
-
-  const user = session?.user;
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -26,48 +22,9 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  if (status === 'loading') {
-    return <div className={styles.header}>Loading...</div>;
-  }
-
   return (
 
     <>
-      <div className={styles.header}>
-        <div className={styles.left}>
-          {user ? `Hi, ${user.name?.split(' ')[0].charAt(0).toUpperCase() + user.name?.split(' ')[0].slice(1).toLowerCase()
-            || 'User'}` : 'Welcome'}
-        </div>
-
-        <div className={styles.right} ref={menuRef}>
-          <motion.img
-            src={user?.image || '/avatar.png'}
-            alt="avatar"
-            className={styles.avatar}
-            onClick={() => setMenuOpen(!menuOpen)}
-            whileHover={{ scale: 1.05 }}
-          />
-
-          <AnimatePresence>
-            {menuOpen && (
-              <motion.div
-                className={styles.dropdown}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-              >
-                <p className={styles.name}>{user?.name}</p>
-                <p className={styles.email}>{user?.email}</p>
-                <button className={styles.logout} onClick={() => signOut({ callbackUrl: '/login' })}>
-                  Sign Out
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-      </div>
       {/* <h1>Welcome to Inventory Dashboard</h1> */}
       <HomeChart />
     </>

@@ -61,16 +61,16 @@ export default function Sidebar() {
                         <nav className={styles.nav}>
                             <Link href="/" className={`${styles.link} ${pathname === "/" ? styles.active : ""}`}><MdDashboard /> Dashboard</Link>
                             <Link href="/ims" className={`${styles.link} ${pathname === "/ims" ? styles.active : ""}`}><FaDatabase /> IMS Master</Link>
-                            <Link href="/livestock" className={`${styles.link} ${pathname === "/livestock" ? styles.active : ""}`}><FaBoxes /> Live Stock</Link>
-                            <Link href="/additems" className={`${styles.link} ${pathname === "/additems" ? styles.active : ""}`}><AiOutlinePlusCircle /> Add Item</Link>
+                            <Link href="/live-stock" className={`${styles.link} ${pathname === "/live-stock" ? styles.active : ""}`}><FaBoxes /> Live Stock</Link>
+                            <Link href="/add-items" className={`${styles.link} ${pathname === "/add-items" ? styles.active : ""}`}><AiOutlinePlusCircle /> Add Item</Link>
 
-                            <Link href="/inwardoutward" className={`${styles.link} ${pathname === "/inwardoutward" ? styles.active : ""}`}><BiTransferAlt /> In - Out</Link>
+                            <Link href="/inventory-entry" className={`${styles.link} ${pathname === "/inventory-entry" ? styles.active : ""}`}><BiTransferAlt /> In - Out</Link>
 
-                            <Link href="/form-responses" className={`${styles.link} ${pathname === "/form-responses" ? styles.active : ""}`}><SiGoogleforms size={20} title="Form Responses" /> Stock entries</Link>
+                            <Link href="/inventory-form-responses" className={`${styles.link} ${pathname === "/inventory-form-responses" ? styles.active : ""}`}><SiGoogleforms size={20} title="Form Responses" /> Stock entries</Link>
 
-                            <Link href="/damage" className={`${styles.link} ${pathname === "/damage" ? styles.active : ""}`}><BiTransferAlt size={20} title="Damage Stock" />Damage</Link>
+                            <Link href="/damage-material-form" className={`${styles.link} ${pathname === "/damage-material-form" ? styles.active : ""}`}><BiTransferAlt size={20} title="Damage Stock" />Damage</Link>
 
-                            <Link href="/damage-entries" className={`${styles.link} ${pathname === "/damage-entries" ? styles.active : ""}`}><SiGoogleforms size={20} title="Form Responses" />Damage Entries</Link>
+                            <Link href="/damage-material-form-responses" className={`${styles.link} ${pathname === "/damage-material-form-responses" ? styles.active : ""}`}><SiGoogleforms size={20} title="Form Responses" />Damage Entries</Link>
                             {/* <Link href="/dailyconsumption" className={`${styles.link} ${pathname === "/dailyconsumption" ? styles.active : ""}`}>Daily</Link> */}
                             <Link href="/about" className={`${styles.link} ${pathname === "/about" ? styles.active : ""}`} style={{ marginTop: "5rem" }}><AiOutlineInfoCircle /> About</Link>
                             <Link href="/logout" className={`${styles.link} ${pathname === "/logout" ? styles.active : ""}`}><FiLogOut /> Log out</Link>

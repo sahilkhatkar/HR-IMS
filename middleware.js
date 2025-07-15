@@ -1,7 +1,9 @@
 import { auth } from './auth'; // Adjust if your file is in lib/auth.js etc.
 import { NextResponse } from 'next/server';
 
-const PUBLIC_PATHS = ['/login', '/_next', '/api', '/favicon.ico'];
+const PUBLIC_PATHS = ['/login', '/_next',
+  '/api',
+  '/favicon.ico'];
 
 export default auth((req) => {
   const { nextUrl, auth } = req;
@@ -17,6 +19,12 @@ export default auth((req) => {
   return NextResponse.next();
 });
 
+// export const config = {
+//   matcher: ['/((?!_next|api|favicon.ico).*)'],
+// };
+
+
+// Match everything except _next and static assets
 export const config = {
-  matcher: ['/((?!_next|api|favicon.ico).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

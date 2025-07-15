@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import Sidebar from './components/Sidebar';
 import styles from './Layout.module.css';
+import Topbar from './components/Topbar';
 
 export default function AppLayoutClient({ children }) {
   const pathname = usePathname();
@@ -14,7 +15,10 @@ export default function AppLayoutClient({ children }) {
   return (
     <div style={{ display: 'flex', maxHeight: '100vh' }}>
       {!hideSidebar && <Sidebar />}
-      <main className={styles.mainContent}>{children}</main>
+      <main className={styles.mainContent}>
+        {!hideSidebar && <Topbar />}
+        
+        {children}</main>
     </div>
   );
 }

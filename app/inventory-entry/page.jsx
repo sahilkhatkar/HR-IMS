@@ -181,18 +181,35 @@ export default function InventoryForm() {
             onSubmit={handleSubmit}
         >
 
-            <h2 className={styles.heading}>Inventory Entry
+            <div className={styles.switchAndDate}>
+                {/* <button type="button" onClick={handleToggle} className={styles.toggleBtn}>
+                    Switch form
+                </button> */}
+
+
+ <h2 className={styles.heading}>
+
+                <div className={styles.toggleWrapper}>
+                    <label className={styles.toggleSwitch}>
+                        <input
+                            type="checkbox"
+                            checked={isInward}
+                            onChange={handleToggle}
+                        />
+                        <span className={styles.slider}></span>
+                    </label>
+                    <span className={styles.toggleLabel}>
+                        {/* {isInward ? 'Inward' : 'Outward'} */}
+                    </span>
+                </div>
 
                 <span className={`${styles.subheading} ${isInward ? styles.inward : styles.outward}`}>
-                    [  {isInward ? 'Inward' : 'Outward'} ]
+                    [ {isInward ? 'Inward' : 'Outward'} ]
                 </span>
+
             </h2>
 
 
-            <div className={styles.switchAndDate}>
-                <button type="button" onClick={handleToggle} className={styles.toggleBtn}>
-                    Switch to {isInward ? 'Outward' : 'Inward'}
-                </button>
 
 
                 <div className={styles.datePickerWrapper}>
