@@ -219,7 +219,7 @@
 .modalContent {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 2px;
   max-height: 400px;
   overflow-y: auto;
   padding-right: 4px;
@@ -231,7 +231,7 @@
   background: var(--colors-white);
   padding: 10px 14px;
   border-radius: 8px;
-  border-left: 4px solid var(--colors-irisBlue_75);
+  /* border-left: 4px solid var(--colors-irisBlue_75); */
   transition: background 0.2s ease;
 }
 

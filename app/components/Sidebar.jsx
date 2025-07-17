@@ -39,9 +39,6 @@ export default function Sidebar() {
     return (
         <>
             {/* Hamburger */}
-
-            <div className={styles.sidebarContainer}>
-
                 <button
                     aria-label="Toggle navigation"
                     className={`${styles.hamburger} ${open ? styles.hamburgerOpen : ''}`}
@@ -72,8 +69,10 @@ export default function Sidebar() {
 
                             <Link href="/damage-material-form-responses" className={`${styles.link} ${pathname === "/damage-material-form-responses" ? styles.active : ""}`}><SiGoogleforms size={20} title="Form Responses" />Damage Entries</Link>
                             {/* <Link href="/dailyconsumption" className={`${styles.link} ${pathname === "/dailyconsumption" ? styles.active : ""}`}>Daily</Link> */}
-                            <Link href="/about" className={`${styles.link} ${pathname === "/about" ? styles.active : ""}`} style={{ marginTop: "5rem" }}><AiOutlineInfoCircle /> About</Link>
-                            <Link href="/logout" className={`${styles.link} ${pathname === "/logout" ? styles.active : ""}`}><FiLogOut /> Log out</Link>
+                            {/* <Link href="/about" className={`${styles.link} ${pathname === "/about" ? styles.active : ""}`}
+                             style={{ marginTop: "5rem" }}
+                             ><AiOutlineInfoCircle /> About</Link> */}
+                            {/* <Link href="/logout" className={`${styles.link} ${pathname === "/logout" ? styles.active : ""}`}><FiLogOut /> Log out</Link> */}
                         </nav>
 
                         {/* <nav className={styles.nav}>
@@ -82,7 +81,6 @@ export default function Sidebar() {
                         </nav> */}
                     </div>
                 </div>
-            </div>
         </>
     );
 }

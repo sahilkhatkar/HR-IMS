@@ -13,12 +13,14 @@ export default function AppLayoutClient({ children }) {
   const hideSidebar = hideSidebarRoutes.includes(pathname);
 
   return (
-    <div style={{ display: 'flex', maxHeight: '100vh' }}>
-      {!hideSidebar && <Sidebar />}
-      <main className={styles.mainContent}>
-        {!hideSidebar && <Topbar />}
-        
-        {children}</main>
-    </div>
+    <>
+      <div style={{ display: 'flex', height: '100vh' }}>
+        {!hideSidebar && <Sidebar />}
+        <main className={styles.mainContent}>
+          {!hideSidebar && <Topbar />}
+          {children}
+        </main>
+      </div>
+    </>
   );
 }

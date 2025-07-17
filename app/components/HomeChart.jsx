@@ -58,8 +58,8 @@ export default function HomeChart() {
 
     const containerStyle = {
         maxWidth: '900px',
-        margin: '0 auto',
-        padding: '2rem',
+        // margin: '0 auto',
+        padding: '1rem',
         // backgroundColor: '#f7f9fc',
         borderRadius: '12px',
         // boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',

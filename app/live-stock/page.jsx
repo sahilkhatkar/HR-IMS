@@ -26,7 +26,7 @@ const COLUMNS_DISPLAY = [
     { key: 'max_level', label: 'Max Level' },
     { key: 'unplanned_stock_qty', label: 'Unplanned Stock' },
     { key: 'planned_stock_qty', label: 'Planned Stock Qty' },
-    { key: 'pending_purchase_qty', label: 'Pending Purchase Qty' },
+    // { key: 'pending_purchase_qty', label: 'Pending Purchase Qty' },
 ];
 
 const COLUMNS_FILTERABLE = [
@@ -93,6 +93,46 @@ export default function Livestock() {
 
     const getUniqueValues = (key) =>
         Array.from(new Set((Array.isArray(stockData) ? stockData : []).map((item) => item[key]).filter(Boolean))).sort();
+
+    const getCellStyle = (max, unplanned) => {
+        if (!max || Number(max) === 0) {
+            return {
+                backgroundColor: '#f0f0f0',
+                color: '#888',
+                fontWeight: 'bold',
+            }; // Grey bg for 0 max_level
+        }
+
+        const percentage = (Number(unplanned) / Number(max)) * 100;
+
+        if (percentage > 100) {
+            return {
+                backgroundColor: '#f3e5f5', // light purple
+                color: '#9c27b0',
+                fontWeight: 'bold',
+            };
+        } else if (percentage > 66) {
+            return {
+                backgroundColor: '#e8f5e9', // light green
+                color: '#4caf50',
+                fontWeight: 'bold',
+            };
+        } else if (percentage > 33) {
+            return {
+                backgroundColor: '#fff3e0', // light orange
+                color: '#ff9800',
+                fontWeight: 'bold',
+            };
+        } else {
+            return {
+                backgroundColor: '#ffebee', // light red
+                color: '#f44336',
+                fontWeight: 'bold',
+            };
+        }
+    };
+
+
 
     if (loading) return <p>Loading stock data...</p>;
     if (error) return <p>Error: {error}</p>;
@@ -228,9 +268,64 @@ export default function Livestock() {
                             currentItems.map((item, index) => (
                                 <tr key={item.item_code || index} className={styles.tableRow}>
                                     <td>{startIndex + index + 1}</td>
-                                    {COLUMNS_DISPLAY.map((col) => (
+                                    {/* {COLUMNS_DISPLAY.map((col) => (
                                         <td key={col.key}>{item[col.key]}</td>
-                                    ))}
+                                    ))} */}
+
+
+                                    {COLUMNS_DISPLAY.map((col) => {
+                                        const value = item[col.key];
+
+                                        // Apply style only for these two columns
+                                        const isStyledCol = col.key === 'max_level' || col.key === 'unplanned_stock_qty';
+                                        const style =
+                                            // isStyledCol
+                                            true
+                                                ? getCellStyle(item.max_level, item.unplanned_stock_qty)
+                                                : {};
+
+                                        return (
+
+                                            isStyledCol ? (
+                                                <td key={col.key}>
+                                                    <span
+                                                        style={
+                                                            value
+                                                                ? {
+                                                                    padding: '8px 12px',
+                                                                    borderRadius: '6px',
+                                                                    ...style,
+                                                                }
+                                                                : undefined
+                                                        }
+                                                    >
+                                                        {value}
+                                                    </span>
+                                                </td>
+
+                                            ) : (
+                                                <td key={col.key}>
+                                                    <span
+                                                        style={{
+                                                            ...style,
+                                                            backgroundColor: 'transparent',
+                                                        }}
+                                                    >
+                                                        {value}
+                                                    </span>
+                                                </td>
+                                            )
+
+
+                                            // <td key={col.key} style={style}>
+                                            //     {value}
+                                            // </td>
+                                        );
+                                    })}
+
+
+
+
                                     <td className={styles.actionsCell}>
                                         <button
                                             className={styles.iconBtn}

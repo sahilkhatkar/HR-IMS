@@ -1,9 +1,3 @@
-.sidebarContainer {
-    /* border: 2px solid; */
-    height: 100vh;
-}
-
-
 /* == Core drawer == */
 .sidebar {
     /* position: fixed; */
@@ -39,7 +33,7 @@
 
         /* position: sticky; */
         top: 0;
-        height: 100vh;
+        /* height: 100vh; */
     }
 }
 
@@ -53,9 +47,10 @@
 
 /* == Branding & nav == */
 .logo {
+    text-wrap: nowrap;
     font-weight: 600;
     font-size: 1.75rem;
-    /* font-family: 'Segoe UI', system-ui, sans-serif; */
+    font-family: 'Segoe UI', system-ui, sans-serif;
     margin-bottom: 6rem;
     letter-spacing: 0.03em;
     color: #111;
