@@ -46,7 +46,16 @@ export default function Livestock() {
     const [infoItem, setInfoItem] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [filters, setFilters] = useState({});
+    const [filters, setFilters] = useState({ colorRange: 'all' });
+
+    const COLOR_FILTERS = [
+        { label: 'All', value: 'all' },
+        { label: 'Over 100%', value: 'over_100' },
+        { label: '66% - 100%', value: '66_100' },
+        { label: '33% - 66%', value: '33_66' },
+        { label: 'Below 33%', value: 'below_33' },
+    ];
+
 
     const handleSort = (key) => {
         const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
@@ -67,11 +76,32 @@ export default function Livestock() {
             );
 
             const columnFiltersMatch = Object.entries(filters).every(([key, value]) => {
-                if (value === 'all') return true;
+                if (key === 'colorRange' || value === 'all') return true;
                 return String(item[key]).trim().toLowerCase() === String(value).trim().toLowerCase();
             });
 
-            return searchMatch && columnFiltersMatch;
+            // Handle color range filtering
+            const max = Number(item.max_level);
+            const unplanned = Number(item.unplanned_stock_qty);
+
+            let percentage = max > 0 ? (unplanned / max) * 100 : null;
+
+            const colorMatch = (() => {
+                switch (filters.colorRange) {
+                    case 'over_100':
+                        return percentage !== null && percentage > 100;
+                    case '66_100':
+                        return percentage !== null && percentage > 66 && percentage <= 100;
+                    case '33_66':
+                        return percentage !== null && percentage > 33 && percentage <= 66;
+                    case 'below_33':
+                        return percentage !== null && percentage <= 33;
+                    default:
+                        return true;
+                }
+            })();
+
+            return searchMatch && columnFiltersMatch && colorMatch;
         });
     }, [stockData, searchTerm, filters]);
 
@@ -95,7 +125,9 @@ export default function Livestock() {
         Array.from(new Set((Array.isArray(stockData) ? stockData : []).map((item) => item[key]).filter(Boolean))).sort();
 
     const getCellStyle = (max, unplanned) => {
-        if (!max || Number(max) === 0) {
+        if (!max
+            // || Number(max) === 0
+        ) {
             return {
                 backgroundColor: '#f0f0f0',
                 color: '#888',
@@ -200,8 +232,43 @@ export default function Livestock() {
                                 }}
                             />
                         </div>
+
                     );
                 })}
+
+
+
+                <div className={styles.columnFilter}>
+                    <label>Stock Level %</label>
+                    <Select
+                        className={styles.reactSelect}
+                        options={COLOR_FILTERS}
+                        value={COLOR_FILTERS.find(opt => opt.value === filters.colorRange)}
+                        onChange={(selected) => {
+                            setFilters(prev => ({ ...prev, colorRange: selected.value }));
+                            setCurrentPage(1);
+                        }}
+                        isSearchable={false}
+                        menuPortalTarget={typeof window !== 'undefined' ? document.body : null}
+                        styles={{
+                            menuPortal: base => ({ ...base, zIndex: 9999 }),
+                            control: base => ({
+                                ...base,
+                                minHeight: '34px',
+                                fontSize: '0.9rem',
+                                borderColor: '#ccc',
+                                boxShadow: 'none',
+                                '&:hover': { borderColor: '#007bff' }
+                            }),
+                            menu: base => ({
+                                ...base,
+                                zIndex: 9999,
+                                fontSize: '0.9rem'
+                            }),
+                        }}
+                    />
+                </div>
+
 
                 <div className={styles.controls}>
                     <div className={styles.rowsPerPage}>

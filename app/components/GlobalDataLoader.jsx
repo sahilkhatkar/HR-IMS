@@ -28,6 +28,7 @@ export default function GlobalWrapper({ children }) {
 
         const data = await res.json();
 
+        console.log('Fetched sheet data:', data);
         dispatch(setSheetData(data));
 
       } catch (err) {
@@ -110,10 +111,7 @@ export default function GlobalWrapper({ children }) {
     // if (!stockData) {
     //   dispatch(fetchStockData());
     // }
-  }, [dispatch, masterData
-    // , stockData
-
-  ]);
+  }, [dispatch, masterData]);
 
   return <>{children}</>;
 }

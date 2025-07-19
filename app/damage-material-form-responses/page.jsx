@@ -12,6 +12,9 @@ function parseDate(str) {
 }
 
 export default function StockEntriesPage() {
+
+    const { masterData = [] } = useSelector((state) => state.masterData);
+
     const { damageStockResponses = [] } = useSelector((state) => state.damageStock);
 
     const [startDate, setStartDate] = useState('');
@@ -22,11 +25,27 @@ export default function StockEntriesPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedRow, setSelectedRow] = useState(null);
 
+    // const allKeys = useMemo(() => {
+    //     const keySet = new Set();
+    //     damageStockResponses.forEach((entry) => Object.keys(entry).forEach((key) => keySet.add(key)));
+    //     return Array.from(keySet);
+    // }, [damageStockResponses]);
+
+
     const allKeys = useMemo(() => {
         const keySet = new Set();
         damageStockResponses.forEach((entry) => Object.keys(entry).forEach((key) => keySet.add(key)));
-        return Array.from(keySet);
+        const keys = Array.from(keySet);
+
+        const itemCodeIndex = keys.indexOf('item_code');
+        if (itemCodeIndex !== -1) {
+            keys.splice(itemCodeIndex, 0, 'description'); // 🟨 Inject description before item_code
+        }
+
+        return keys;
     }, [damageStockResponses]);
+
+
 
     const filtered = useMemo(() => {
         const reversed = [...damageStockResponses].reverse();
@@ -88,7 +107,20 @@ export default function StockEntriesPage() {
         const csv = [
             ['S. No.', ...allKeys], // Include S. No. in CSV
             ...filtered.map((row, index) =>
-                [`"${index + 1}"`, ...allKeys.map((key) => `"${row[key] ?? ''}"`)].join(',')
+                [
+                    `"${index + 1}"`,
+                    // Only include description if it exists
+                    // ...allKeys.map((key) => `"${row[key] ?? ''}"`)
+
+                    ...allKeys.map((key) => {
+                        if (key === 'description') {
+                            const matched = masterData.find((item) => item.item_code === row.item_code);
+                            return `"${matched?.description ?? ''}"`;
+                        }
+                        return `"${row[key] ?? ''}"`;
+                    })
+
+                ].join(',')
             ),
         ].join('\n');
 
@@ -96,7 +128,10 @@ export default function StockEntriesPage() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'stock-entries.csv';
+        // a.download = 'stock-entries.csv';
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        a.download = `damage-material-entries-${timestamp}.csv`;
+
         a.click();
         URL.revokeObjectURL(url);
     };
@@ -182,9 +217,16 @@ export default function StockEntriesPage() {
                                 >
                                     <td>{(page - 1) * pageSize + i + 1}</td>
                                     {allKeys.map((key) => {
-                                        const val = entry[key];
+                                        let val = entry[key];
+
+                                        if (key === 'description') {
+                                            const matchedItem = masterData.find((item) => item.item_code === entry.item_code);
+                                            val = matchedItem?.description || '—';
+                                        }
+
                                         const isQty = key === 'stock_qty';
                                         const isType = key === 'form_type';
+
                                         return (
                                             <td
                                                 key={key}
