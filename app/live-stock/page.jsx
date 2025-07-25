@@ -117,6 +117,47 @@ export default function Livestock() {
         });
     }, [filteredData, sortConfig]);
 
+
+
+
+
+
+const handleExportCSV = (data) => {
+  if (!data || data.length === 0) {
+    alert('No data to export.');
+    return;
+  }
+
+  // Dynamically get all unique keys from the data
+  const allKeys = Array.from(
+    new Set(data.flatMap(item => Object.keys(item)))
+  );
+
+  // Optional: sort keys alphabetically (remove this if you want raw order)
+  allKeys.sort();
+
+  const replacer = (key, value) => (value === null || value === undefined ? '' : value);
+
+  const csv = [
+    allKeys.join(','), // header row
+    ...data.map(row =>
+      allKeys.map(fieldName =>
+        JSON.stringify(row[fieldName], replacer)
+      ).join(',')
+    ),
+  ].join('\r\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', `live_stock_export_${Date.now()}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+
     const totalPages = Math.ceil(sortedData.length / rowsPerPage);
     const startIndex = (currentPage - 1) * rowsPerPage;
     const currentItems = sortedData.slice(startIndex, startIndex + rowsPerPage);
@@ -285,14 +326,28 @@ export default function Livestock() {
                             ))}
                         </select>
                     </div>
+
+
+
+
+
+
+                    <div className={styles.totalStockQty}>
+                        <span>Total Stock</span>
+                        <p>
+                            {filteredData.reduce((sum, obj) => sum + (Number(obj.unplanned_stock_qty) || 0), 0)}
+                        </p>
+                    </div>
+
+                    {/* Export Button */}
+                    <button
+                        className={styles.exportBtn}
+                        onClick={() => handleExportCSV(filteredData)}
+                    >
+                        Export CSV
+                    </button>
                 </div>
 
-                <div className={styles.totalStockQty}>
-                    <span>Total Stock</span>
-                    <p>
-                        {filteredData.reduce((sum, obj) => sum + (Number(obj.unplanned_stock_qty) || 0), 0)}
-                    </p>
-                </div>
             </div>
 
             <motion.p

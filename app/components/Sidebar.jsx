@@ -1,86 +1,77 @@
-'use client';               // ← needed if you’re on Next 13/14 app router
+'use client';
+
 import { useState, useEffect } from 'react';
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { FiMenu } from 'react-icons/fi';
-import styles from './Sidebar.module.css';
-
+import { FiMenu, FiLogOut } from 'react-icons/fi';
 import { MdDashboard } from 'react-icons/md';
-import { FaDatabase } from 'react-icons/fa';
-import { FaBoxes } from 'react-icons/fa';
-import { AiOutlinePlusCircle } from 'react-icons/ai';
-import { AiOutlineInfoCircle } from 'react-icons/ai';
-import { FiLogOut } from 'react-icons/fi';
-import { BiTransferAlt } from "react-icons/bi";
-import { BsBoxSeam } from 'react-icons/bs';
-import { SiGoogleforms } from "react-icons/si";
+import { FaDatabase, FaBoxes } from 'react-icons/fa';
+import { AiOutlinePlusCircle, AiOutlineInfoCircle } from 'react-icons/ai';
+import { PiWarehouseFill } from "react-icons/pi";
+import { BiTransferAlt } from 'react-icons/bi';
+import { SiGoogleforms } from 'react-icons/si';
+import styles from './Sidebar.module.css'; // assuming styles are handled separately
 
+// Route Configuration Object
+const sidebarRoutes = [
+  { href: '/', label: 'Dashboard', icon: MdDashboard },
+  { href: '/ims', label: 'IMS Master', icon: FaDatabase },
+  { href: '/live-stock', label: 'Live Stock', icon: FaBoxes },
+  { href: '/add-items', label: 'Add Item', icon: AiOutlinePlusCircle },
+  { href: '/inventory-entry', label: 'In - Out', icon: BiTransferAlt },
+  { href: '/inventory-form-responses', label: 'Stock entries', icon: SiGoogleforms },
+  { href: '/damage-material-form', label: 'Damage', icon: BiTransferAlt },
+  { href: '/damage-material-form-responses', label: 'Damage Entries', icon: SiGoogleforms },
+  { href: '/stores', label: 'Stores', icon: PiWarehouseFill },
+  // Optional extras:
+  // { href: '/about', label: 'About', icon: AiOutlineInfoCircle },
+  // { href: '/logout', label: 'Log out', icon: FiLogOut },
+];
 
 export default function Sidebar() {
-    const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
-    // ⤵︎ Auto-close the drawer when you resize above the breakpoint
-    useEffect(() => {
-        const onResize = () => {
-            if (window.innerWidth >= 768) setOpen(false);
-        };
-        window.addEventListener('resize', onResize);
-        return () => window.removeEventListener('resize', onResize);
-    }, []);
+  // Close drawer on larger screens
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) setOpen(false);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
+  return (
+    <>
+      {/* Hamburger button */}
+      <button
+        aria-label="Toggle navigation"
+        className={`${styles.hamburger} ${open ? styles.hamburgerOpen : ''}`}
+        onClick={() => setOpen(!open)}
+      >
+        <FiMenu />
+      </button>
 
-    const fullUrl = `${pathname}`;
-    console.log(fullUrl);
-    // const fullUrl = `${window.location.origin}${pathname}${searchParams ? `?${searchParams.toString()}` : ''}`;
+      {/* Mobile backdrop */}
+      {open && <div className={styles.backdrop} onClick={() => setOpen(false)} />}
 
+      {/* Sidebar drawer */}
+      <aside className={`${styles.sidebar} ${open ? styles.show : ''}`}>
+        <h2 className={styles.logo}>H.R. Exports</h2>
 
-    return (
-        <>
-            {/* Hamburger */}
-                <button
-                    aria-label="Toggle navigation"
-                    className={`${styles.hamburger} ${open ? styles.hamburgerOpen : ''}`}
-                    onClick={() => setOpen(!open)}
-                >
-                    <FiMenu />
-                </button>
-
-                {/* Overlay for mobile */}
-                {open && <div className={styles.backdrop} onClick={() => setOpen(false)} />}
-
-                {/* Drawer */}
-                <div className={`${styles.sidebar} ${open ? styles.show : ''}`}>
-                    <h2 className={styles.logo}>H.R. Exports</h2>
-                    <div className="">
-
-                        <nav className={styles.nav}>
-                            <Link href="/" className={`${styles.link} ${pathname === "/" ? styles.active : ""}`}><MdDashboard /> Dashboard</Link>
-                            <Link href="/ims" className={`${styles.link} ${pathname === "/ims" ? styles.active : ""}`}><FaDatabase /> IMS Master</Link>
-                            <Link href="/live-stock" className={`${styles.link} ${pathname === "/live-stock" ? styles.active : ""}`}><FaBoxes /> Live Stock</Link>
-                            <Link href="/add-items" className={`${styles.link} ${pathname === "/add-items" ? styles.active : ""}`}><AiOutlinePlusCircle /> Add Item</Link>
-
-                            <Link href="/inventory-entry" className={`${styles.link} ${pathname === "/inventory-entry" ? styles.active : ""}`}><BiTransferAlt /> In - Out</Link>
-
-                            <Link href="/inventory-form-responses" className={`${styles.link} ${pathname === "/inventory-form-responses" ? styles.active : ""}`}><SiGoogleforms size={20} title="Form Responses" /> Stock entries</Link>
-
-                            <Link href="/damage-material-form" className={`${styles.link} ${pathname === "/damage-material-form" ? styles.active : ""}`}><BiTransferAlt size={20} title="Damage Stock" />Damage</Link>
-
-                            <Link href="/damage-material-form-responses" className={`${styles.link} ${pathname === "/damage-material-form-responses" ? styles.active : ""}`}><SiGoogleforms size={20} title="Form Responses" />Damage Entries</Link>
-                            {/* <Link href="/dailyconsumption" className={`${styles.link} ${pathname === "/dailyconsumption" ? styles.active : ""}`}>Daily</Link> */}
-                            {/* <Link href="/about" className={`${styles.link} ${pathname === "/about" ? styles.active : ""}`}
-                             style={{ marginTop: "5rem" }}
-                             ><AiOutlineInfoCircle /> About</Link> */}
-                            {/* <Link href="/logout" className={`${styles.link} ${pathname === "/logout" ? styles.active : ""}`}><FiLogOut /> Log out</Link> */}
-                        </nav>
-
-                        {/* <nav className={styles.nav}>
-                            <Link href="/" className={`${styles.link} ${pathname === "/logout" ? styles.active : ""}`}>Log out</Link>
-                            <Link href="/ims" className={`${styles.link} ${pathname === "/hide" ? styles.active : ""}`}>Hide</Link>
-                        </nav> */}
-                    </div>
-                </div>
-        </>
-    );
+        <nav className={styles.nav}>
+          {sidebarRoutes.map(({ href, label, icon: Icon }) => (
+            <Link
+              key={href}
+              href={href}
+              className={`${styles.link} ${pathname === href ? styles.active : ''}`}
+              onClick={() => setOpen(false)} // auto-close on click (mobile)
+            >
+              <Icon size={20} /> {label}
+            </Link>
+          ))}
+        </nav>
+      </aside>
+    </>
+  );
 }
