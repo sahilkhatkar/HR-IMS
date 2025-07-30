@@ -12,7 +12,7 @@
     /* padding: 1rem 1rem 1rem 0; */
     margin: 0;
 
-    background: var(--color-col2);
+    background: var(--bg);
     max-height: 100vh;
     height: 100vh;
     overflow: auto;

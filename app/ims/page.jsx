@@ -238,7 +238,7 @@ export default function AnimatedTable() {
               </tr>
             ) : (
               currentItems.map((item, idx) => (
-                <motion.tr key={item.item_code || idx} className={styles.tableRow} whileHover={{ scale: 1.02 }}>
+                <motion.tr key={item.item_code || idx} className={styles.tableRow}>
                   <td>{startIndex + idx + 1}</td>
                   {DISPLAY_COLUMNS.map((col) => (
                     <td key={col.key}>{item[col.key]}</td>

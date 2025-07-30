@@ -81,6 +81,22 @@
   transform: scale(1.02);
 }
 
+/* New Entry Button */
+.newEntry {
+  padding: 8px 16px;
+  background: var(--primary);
+  color: var(--text);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.newEntry:hover {
+  background: var(--primary-light);
+}
+
 /* Export Button */
 .exportBtn {
   padding: 8px 16px;

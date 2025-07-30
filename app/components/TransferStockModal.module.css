@@ -1,0 +1,312 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 1rem;
+}
+
+.modal {
+  background: var(--card-bg, #fff);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 420px;
+  padding: 1.5rem;
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--primary, #1a1a1a);
+}
+
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: var(--accent, #333);
+}
+
+/* Transfer from/to */
+.transferSection {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.fromToGroup {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  ;
+}
+
+.selectWrapper {
+  display: flex;
+  flex: 1;
+  align-items: center;
+}
+
+.selectWrapper label {
+  font-size: 0.85rem;
+  color: var(--primary, #666);
+  width: 3rem;
+  opacity: 0.7;
+}
+
+.select {
+  padding: 0.5rem;
+  border: 1px solid #d8dce1;
+  border-radius: 6px;
+  flex: 1;
+  border: none;
+}
+
+/* Swap */
+.swapButton {
+  height: 2.5rem;
+  width: 2.5rem;
+  border-radius: 50%;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--primary-light, #666);
+  background: #f1f1f1;
+  background: var(--border, #f1f1f1);
+  align-self: center;
+  cursor: pointer;
+}
+
+/* Input Group */
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.inputGroup label {
+  font-size: 0.85rem;
+  color: var(--primary, #666);
+  opacity: 0.7;
+}
+
+.input {
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid var(--border, #d8dce1);
+  border-radius: 6px;
+  width: 100%;
+
+  background: var(--card-bg);
+  color: var(--text, #333);
+
+  outline-color: var(--primary, #1570ef);
+}
+
+.qtyRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.maxButton {
+  margin-left: 0.5rem;
+  background: transparent;
+  color: var(--primary, #1570ef);
+  font-size: 0.85rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.availableText {
+  font-size: 0.8rem;
+  color: var(--primary, #888);
+  margin-top: 0.25rem;
+  opacity: 0.7;
+}
+
+/* Footer */
+.footer {
+  margin-top: 1rem;
+}
+
+.confirmButton {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: var(--primary, #1570ef);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .transferSection {
+    flex-direction: column;
+  }
+
+  .swapButton {
+    align-self: center;
+  }
+
+  .confirmButton {
+    font-size: 1rem;
+  }
+}
+
+.customDropdown {
+  position: relative;
+  border: 1px solid #d8dce1;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 0.5rem;
+  background: white;
+}
+
+.selectedItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.arrow {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.dropdownMenu {
+  background: var(--card-bg, #fff);
+
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  margin-top: 1rem;
+  border-top: none;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 18rem;
+  overflow-y: auto;
+
+  scale: 1.01;
+}
+
+.searchInput {
+  background: var(--card-bg, #fff);
+  color: var(--primary-light, #666);
+
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--border, #ddd);
+  font-size: 0.9rem;
+}
+
+.searchInput:focus-visible {
+  border: 1px solid var(--primary, #1570ef);
+  outline: none;
+}
+
+.dropdownList {
+  background: var(--card-bg, #fff);
+  max-height: 200px;
+  overflow-y: auto;
+
+  color: var(--text, #666);
+}
+
+.dropdownItem {
+  padding: 0.6rem 0.75rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border, #f0f0f0);
+}
+
+.dropdownItem:hover {
+  background-color: #f5f5f5;
+  background: var(--text, #f5f5f5);
+  color: var(--bg, #666);
+}
+
+.itemName {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.itemDetails {
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  color: var(--primary-light, #888);
+}
+
+.itemValue {
+  margin-left: 0.5rem;
+}
+
+.noResults {
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

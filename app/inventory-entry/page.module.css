@@ -46,7 +46,7 @@
 .toggleBtn,
 .addBtn,
 .submitBtn {
-  background-color: #1976d2;
+  background-color: var(--primary, #1976d2);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -62,7 +62,7 @@
 .toggleBtn:hover,
 .addBtn:hover,
 .submitBtn:hover {
-  background-color: #135ba1;
+  background-color: var(--primary-light,#135ba1);
 }
 
 .actionButtons {
@@ -86,9 +86,6 @@
   border-collapse: collapse;
   margin-top: 1rem;
 
-  /* max-width: 1200px; */
-
-  /* table-layout: fixed; */
 }
 
 .inventoryTable th,
@@ -350,4 +347,29 @@
 
 .toggleSwitch input:checked+.slider::before {
   transform: translateX(24px);
+}
+
+
+
+
+/* app/transfer/TransferPage.module.css */
+.page {
+  padding: 2rem;
+  font-family: sans-serif;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.button {
+  padding: 0.75rem 1.5rem;
+  background-color: #28a745;
+  color: white;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }

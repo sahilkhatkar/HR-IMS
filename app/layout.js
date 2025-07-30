@@ -10,6 +10,7 @@ import { Suspense } from 'react';
 import AppLayoutClient from "./AppLayoutClient";
 import { Toaster } from 'react-hot-toast';
 import Topbar from "./components/Topbar";
+import { ThemeProvider } from "./ThemeContext";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -40,23 +41,22 @@ export default function RootLayout({ children }) {
 
         <Suspense fallback={null}>
 
-          {/* ${styles.bodyCss} ${geistSans.variable} ${geistMono.variable} */}
-          <SessionProvider>
-            <StoreProvider>
-              <GlobalWrapper>
+          <ThemeProvider>
+            <SessionProvider>
+              <StoreProvider>
+                <GlobalWrapper>
 
-                <Toaster position="top-right" />
+                  <Toaster position="top-right" />
 
-                <AppLayoutClient>
-                  {/* <Topbar /> */}
-                  {/* <main className={styles.mainContent}> */}
-                  {children}
-                  {/* </main> */}
-                </AppLayoutClient>
+                  <AppLayoutClient>
+                    {children}
+                  </AppLayoutClient>
 
-              </GlobalWrapper>
-            </StoreProvider>
-          </SessionProvider></Suspense>
+                </GlobalWrapper>
+              </StoreProvider>
+            </SessionProvider>
+          </ThemeProvider>
+        </Suspense>
       </body>
     </html>
   );

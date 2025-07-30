@@ -1,16 +1,17 @@
 
 /* ====== Topbar Layout ====== */
 .topbar {
-  height: var(--topbar-height);
-  background: white;
-  color: var(--color-primary-blue);
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   padding: 1.5rem;
+  height: var(--topbar-height);
   position: sticky;
   top: 0;
   z-index: 3;
+
+  background: var(--card-bg);
+  color: var(--primary);
   font-family: var(--font-family);
 
   /* Glassmorphism */
@@ -52,6 +53,7 @@
   top: 110%;
   right: 0;
   background: var(--card-bg, #fff);
+  border: 1px solid var(--border, #eaeaea);
   padding: 1rem;
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
@@ -98,7 +100,9 @@
   align-items: center;
   padding: 1rem 2rem;
   background: #fff;
-  border-bottom: 1px solid #eaeaea;
+  background: var(--card-bg);
+  color: var(--primary);
+  border-bottom: 1px solid var(--border, #eaeaea);
   position: relative;
   z-index: 10;
   font-family: 'Segoe UI', sans-serif;

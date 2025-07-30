@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import styles from './page.module.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import TransferStockModal from '../components/TransferStockModal';
 
 import dynamic from 'next/dynamic';
 import { addResponseToResponses } from '../../store/slices/formResponsesSlice';
@@ -17,6 +18,8 @@ const script_live_stock_url = "https://script.google.com/macros/s/AKfycbxnnkkjOo
 export default function InventoryForm() {
 
     const dispatch = useDispatch();
+
+    const [isOpen, setIsOpen] = useState(false);
 
     const { masterData, loading, error } = useSelector((state) => state.masterData);
     const [isInward, setIsInward] = useState(true);
@@ -187,29 +190,31 @@ export default function InventoryForm() {
                 </button> */}
 
 
- <h2 className={styles.heading}>
+                <h2 className={styles.heading}>
 
-                <div className={styles.toggleWrapper}>
-                    <label className={styles.toggleSwitch}>
-                        <input
-                            type="checkbox"
-                            checked={isInward}
-                            onChange={handleToggle}
-                        />
-                        <span className={styles.slider}></span>
-                    </label>
-                    <span className={styles.toggleLabel}>
-                        {/* {isInward ? 'Inward' : 'Outward'} */}
+                    <div className={styles.toggleWrapper}>
+                        <label className={styles.toggleSwitch}>
+                            <input
+                                type="checkbox"
+                                checked={isInward}
+                                onChange={handleToggle}
+                            />
+                            <span className={styles.slider}></span>
+                        </label>
+                        <span className={styles.toggleLabel}>
+                            {/* {isInward ? 'Inward' : 'Outward'} */}
+                        </span>
+                    </div>
+
+                    <span className={`${styles.subheading} ${isInward ? styles.inward : styles.outward}`}>
+                        [ {isInward ? 'Inward' : 'Outward'} ]
                     </span>
-                </div>
 
-                <span className={`${styles.subheading} ${isInward ? styles.inward : styles.outward}`}>
-                    [ {isInward ? 'Inward' : 'Outward'} ]
-                </span>
-
-            </h2>
+                </h2>
 
 
+                <button className={styles.button} onClick={() => setIsOpen(true)}>Transfer Stock</button>
+                <TransferStockModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
 
 
                 <div className={styles.datePickerWrapper}>

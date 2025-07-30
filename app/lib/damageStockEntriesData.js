@@ -17,6 +17,13 @@ function toSnakeCase(str) {
     .toLowerCase();               // Convert to lowercase
 }
 
+
+const parseValue = (value) => {
+  const trimmed = value.trim();
+  const numberValue = Number(trimmed);
+  return !isNaN(numberValue) && trimmed !== '' ? numberValue : trimmed;
+};
+
 export async function fetchData() {
   // const keyFile = path.resolve('./app/lib/credentials.json');
 
@@ -55,7 +62,8 @@ export async function fetchData() {
     // Step 2: Convert rows using normalized keys
     const allData = dataRows.map((row) =>
       normalizedHeaders.reduce((obj, key, i) => {
-        obj[key] = row[i] || '';
+        // obj[key] = row[i] || '';
+        obj[key] = parseValue(row[i] || '');
         return obj;
       }, {})
     );

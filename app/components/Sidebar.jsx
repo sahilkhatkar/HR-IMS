@@ -10,6 +10,7 @@ import { AiOutlinePlusCircle, AiOutlineInfoCircle } from 'react-icons/ai';
 import { PiWarehouseFill } from "react-icons/pi";
 import { BiTransferAlt } from 'react-icons/bi';
 import { SiGoogleforms } from 'react-icons/si';
+import { IoMdSettings } from 'react-icons/io';
 import styles from './Sidebar.module.css'; // assuming styles are handled separately
 
 // Route Configuration Object
@@ -23,6 +24,7 @@ const sidebarRoutes = [
   { href: '/damage-material-form', label: 'Damage', icon: BiTransferAlt },
   { href: '/damage-material-form-responses', label: 'Damage Entries', icon: SiGoogleforms },
   { href: '/stores', label: 'Stores', icon: PiWarehouseFill },
+  { href: '/settings', label: 'Settings', icon: IoMdSettings },
   // Optional extras:
   // { href: '/about', label: 'About', icon: AiOutlineInfoCircle },
   // { href: '/logout', label: 'Log out', icon: FiLogOut },

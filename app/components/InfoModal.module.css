@@ -50,6 +50,7 @@
 
 .value {
   color: #333;
+  text-align: end;
 }
 
 .actions {

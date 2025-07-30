@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import styles from './StockTable.module.css';
 import { useSelector } from 'react-redux';
 import { IoIosSearch } from "react-icons/io";
+import { GrAdd } from "react-icons/gr";
+
 
 function parseDate(str) {
     const [day, month, year] = str.split('-');
@@ -175,6 +177,7 @@ export default function StockEntriesPage() {
                         </div>
                     </div>
 
+                    <button className={styles.newEntry}> <GrAdd /> Add new entry</button>
                 </div>
 
                 <div className={styles.rightControls}>

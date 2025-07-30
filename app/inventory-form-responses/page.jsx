@@ -55,12 +55,26 @@ export default function StockEntriesPage() {
             const to = endDate ? new Date(endDate) : null;
 
             const matchesDate = (!from || d >= from) && (!to || d <= to);
+
+
+            // const matchesSearch =
+            //     !searchTerm ||  
+            //     Object.values(entry)
+            //         .join(' ')
+            //         .toLowerCase()
+            //         .includes(searchTerm.toLowerCase());
+
+
+
+
+            const description = masterData.find((item) => item.item_code === entry.item_code)?.description || '';
+
             const matchesSearch =
                 !searchTerm ||
-                Object.values(entry)
-                    .join(' ')
-                    .toLowerCase()
-                    .includes(searchTerm.toLowerCase());
+                (
+                    Object.values(entry).join(' ') + ' ' + description
+                ).toLowerCase().includes(searchTerm.toLowerCase());
+
 
             return matchesDate && matchesSearch;
         });

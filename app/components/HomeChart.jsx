@@ -12,18 +12,17 @@ import {
 } from 'chart.js';
 import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
+import styles from './HomeChart.module.css';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, ArcElement);
 
 export default function HomeChart() {
-    // const { stockData = [], loading, error } = useSelector((state) => state.data);
     const { stockData, loading, error } = useSelector((state) => state.liveStockData);
 
-    if (loading) return <div style={{ padding: '2rem' }}>Loading charts...</div>;
-    if (error) return <div style={{ padding: '2rem', color: 'red' }}>Error loading data: {error}</div>;
-    if (!stockData?.length) return <div style={{ padding: '2rem' }}>No live stock data available.</div>;
+    if (loading) return <div className={styles.loading}>Loading charts...</div>;
+    if (error) return <div className={styles.error}>Error loading data: {error}</div>;
+    if (!stockData?.length) return <div className={styles.noData}>No live stock data available.</div>;
 
-    // ✅ Bar Chart: Quantity per Plant
     const plantQtyMap = stockData.reduce((acc, curr) => {
         const plant_name = curr.plant_name || 'Unknown';
         acc[plant_name] = (acc[plant_name] || 0) + (parseFloat(curr.unplanned_stock_qty) || 0);
@@ -56,51 +55,27 @@ export default function HomeChart() {
         ],
     };
 
-    const containerStyle = {
-        maxWidth: '900px',
-        // margin: '0 auto',
-        padding: '1rem',
-        // backgroundColor: '#f7f9fc',
-        borderRadius: '12px',
-        // boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-    };
-
-    const chartBoxStyle = {
-        marginBottom: '3rem',
-        backgroundColor: '#ffffff',
-        padding: '1.5rem',
-        borderRadius: '10px',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-    };
-
     return (
-        <div style={containerStyle}>
-            {/* <motion.h2
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-            >
-                📊 Live Inventory Overview
-            </motion.h2> */}
-
+        <div className={styles.container}>
             <motion.div
-                style={chartBoxStyle}
+                className={styles.chartBox}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.7, delay: 0.2 }}
             >
-                <h3 style={{ marginBottom: '1rem', color: '#2c3e50' }}>Total Stock by Plant</h3>
+                <h3 className={styles.heading}>Total Stock by Plant</h3>
                 <Bar data={barData} />
             </motion.div>
 
+            {/* Uncomment to enable Pie Chart */}
             {/* <motion.div
-                style={chartBoxStyle}
+                className={styles.chartBox}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.7, delay: 0.4 }}
             >
-                <h3 style={{ marginBottom: '1rem', color: '#2c3e50', }}>Stock Distribution by Plant</h3>
-                <Pie data={pieData}/>
+                <h3 className={styles.heading}>Stock Distribution by Plant</h3>
+                <Pie data={pieData} />
             </motion.div> */}
         </div>
     );
