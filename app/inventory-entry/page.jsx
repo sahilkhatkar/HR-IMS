@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
 // import Select from 'react-select';
@@ -22,11 +22,15 @@ export default function InventoryForm() {
     const [isOpen, setIsOpen] = useState(false);
 
     const { masterData, loading, error } = useSelector((state) => state.masterData);
+    const { salesOrder } = useSelector((state) => state.salesOrder);
     const [isInward, setIsInward] = useState(true);
     const [rows, setRows] = useState([createNewRow()]);
     const [inputValue, setInputValue] = useState('');
+    const [saleOrderInputValue, setSaleOrderInputValue] = useState('');
+
     const [formErrors, setFormErrors] = useState([]);
-    const filteredOptions = useRef([]);
+
+
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -35,12 +39,43 @@ export default function InventoryForm() {
         return today.toISOString().split('T')[0]; // "2025-06-26"
     });
 
+    const allItemOptions = masterData?.map((item) => ({
+        value: item.item_code,
+        label: `${item.description} - ${item.item_code}`,
+    }));
+
+    const filteredItemOptions = useMemo(() => {
+        if (!allItemOptions) return [];
+        const lowerInput = inputValue.toLowerCase();
+        return allItemOptions
+            .filter(option => option.label.toLowerCase().includes(lowerInput))
+            .slice(0, 30);
+    }, [inputValue, allItemOptions]);
+
+
     const allPlantOptions = Array.from(new Set(masterData?.map(item => item.plant_name)))
         .filter(Boolean)
         .map(plant => ({
             value: plant,
             label: plant,
         }));
+
+    const filteredSaleOrderOptions = useMemo(() => {
+        if (!salesOrder || !Array.isArray(salesOrder)) return [];
+
+        const lowerInput = saleOrderInputValue.toLowerCase();
+
+        return salesOrder
+            .filter(order =>
+                order.sales_order_no.toLowerCase().includes(lowerInput)
+            )
+            .slice(0, 30)
+            .map(order => ({
+                value: order.sales_order_no,
+                label: `${order.sales_order_no} (PI: ${order.pi}, Qty: ${order.qty_new_bags})`,
+            }));
+    }, [salesOrder, saleOrderInputValue]);
+
 
     function createNewRow() {
         return {
@@ -172,11 +207,6 @@ export default function InventoryForm() {
     // if (loading) return <div className={styles.loading}>Loading...</div>;
     if (error) return <div className={styles.error}>Error: {error}</div>;
 
-    const allItemOptions = masterData?.map((item) => ({
-        value: item.item_code,
-        label: `${item.description} - ${item.item_code}`,
-    }));
-
     return (
         // <form className={styles.inventoryContainer} onSubmit={handleSubmit}>
         <form
@@ -275,17 +305,14 @@ export default function InventoryForm() {
                                                 }
                                                 : null
                                         }
-                                        options={filteredOptions.current}
+                                        options={filteredItemOptions}
+                                        onInputChange={(value) => setInputValue(value)}
                                         filterOption={null}
-                                        onInputChange={(value) => {
-                                            setInputValue(value);
-                                            filteredOptions.current = allItemOptions
-                                                .filter(option => option.label.toLowerCase().includes(value.toLowerCase()))
-                                                .slice(0, 30);
-                                        }}
                                         onChange={(selected) => handleItemSelect(index, selected)}
                                         isClearable
+                                        isSearchable
                                     />
+
                                     {row.description && (
                                         <div className={styles.itemDescription}>{row.description}</div>
                                     )}
@@ -320,17 +347,54 @@ export default function InventoryForm() {
 
                                 </td>
                                 {!isInward && (
+
+
+
+                                    // <td>
+                                    //     <input
+                                    //         type="text"
+                                    //         value={row.saleOrder}
+                                    //         onChange={(e) => handleChange(index, 'saleOrder', e.target.value)}
+                                    //         placeholder="Enter Sale Order No."
+                                    //     />
+                                    //     {formErrors[index]?.saleOrder && (
+                                    //         <div className={styles.errorMsg}>{formErrors[index].saleOrder}</div>
+                                    //     )}
+                                    // </td>
+
+
                                     <td>
-                                        <input
-                                            type="text"
-                                            value={row.saleOrder}
-                                            onChange={(e) => handleChange(index, 'saleOrder', e.target.value)}
-                                            placeholder="Enter Sale Order No."
+                                        <Select
+                                            className={styles.reactSelect}
+                                            placeholder="Select sale order..."
+                                            value={
+                                                row.saleOrder
+                                                    ? {
+                                                        value: row.saleOrder,
+                                                        label:
+                                                            salesOrder.find(order => order.sales_order_no === row.saleOrder)?.sales_order_no ||
+                                                            row.saleOrder
+                                                    }
+                                                    : null
+                                            }
+                                            options={filteredSaleOrderOptions}
+                                            onInputChange={(value) => setSaleOrderInputValue(value)}
+                                            filterOption={null}
+                                            onChange={(selected) => handleChange(index, 'saleOrder', selected?.value || '')}
+                                            isClearable
+                                            isSearchable
                                         />
+
                                         {formErrors[index]?.saleOrder && (
                                             <div className={styles.errorMsg}>{formErrors[index].saleOrder}</div>
                                         )}
                                     </td>
+
+
+
+
+
+
                                 )}
                                 <td>
                                     <input

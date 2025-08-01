@@ -25,7 +25,8 @@ const COLUMNS_DISPLAY = [
     { key: 'plant_name', label: 'Plant' },
     { key: 'max_level', label: 'Max Level' },
     { key: 'unplanned_stock_qty', label: 'Unplanned Stock' },
-    { key: 'planned_stock_qty', label: 'Planned Stock Qty' },
+    // { key: 'planned_stock_qty', label: 'Planned Stock Qty' },
+    { key: 'age', label: 'Age (in Days)' },
     // { key: 'pending_purchase_qty', label: 'Pending Purchase Qty' },
 ];
 
@@ -109,11 +110,23 @@ export default function Livestock() {
         if (!sortConfig.key) return filteredData;
 
         return [...filteredData].sort((a, b) => {
-            const aValue = a?.[sortConfig.key] ?? '';
-            const bValue = b?.[sortConfig.key] ?? '';
-            return sortConfig.direction === 'asc'
-                ? String(aValue).localeCompare(String(bValue))
-                : String(bValue).localeCompare(String(aValue));
+            const aVal = a?.[sortConfig.key];
+            const bVal = b?.[sortConfig.key];
+
+            const aNum = Number(aVal);
+            const bNum = Number(bVal);
+
+            const isNumeric = !isNaN(aNum) && !isNaN(bNum);
+
+            if (isNumeric) {
+                return sortConfig.direction === 'asc' ? aNum - bNum : bNum - aNum;
+            } else {
+                const aStr = String(aVal || '');
+                const bStr = String(bVal || '');
+                return sortConfig.direction === 'asc'
+                    ? aStr.localeCompare(bStr)
+                    : bStr.localeCompare(aStr);
+            }
         });
     }, [filteredData, sortConfig]);
 
@@ -122,40 +135,41 @@ export default function Livestock() {
 
 
 
-const handleExportCSV = (data) => {
-  if (!data || data.length === 0) {
-    alert('No data to export.');
-    return;
-  }
 
-  // Dynamically get all unique keys from the data
-  const allKeys = Array.from(
-    new Set(data.flatMap(item => Object.keys(item)))
-  );
+    const handleExportCSV = (data) => {
+        if (!data || data.length === 0) {
+            alert('No data to export.');
+            return;
+        }
 
-  // Optional: sort keys alphabetically (remove this if you want raw order)
-  allKeys.sort();
+        // Dynamically get all unique keys from the data
+        const allKeys = Array.from(
+            new Set(data.flatMap(item => Object.keys(item)))
+        );
 
-  const replacer = (key, value) => (value === null || value === undefined ? '' : value);
+        // Optional: sort keys alphabetically (remove this if you want raw order)
+        allKeys.sort();
 
-  const csv = [
-    allKeys.join(','), // header row
-    ...data.map(row =>
-      allKeys.map(fieldName =>
-        JSON.stringify(row[fieldName], replacer)
-      ).join(',')
-    ),
-  ].join('\r\n');
+        const replacer = (key, value) => (value === null || value === undefined ? '' : value);
 
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', `live_stock_export_${Date.now()}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
+        const csv = [
+            allKeys.join(','), // header row
+            ...data.map(row =>
+                allKeys.map(fieldName =>
+                    JSON.stringify(row[fieldName], replacer)
+                ).join(',')
+            ),
+        ].join('\r\n');
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `live_stock_export_${Date.now()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
 
     const totalPages = Math.ceil(sortedData.length / rowsPerPage);
@@ -166,17 +180,18 @@ const handleExportCSV = (data) => {
         Array.from(new Set((Array.isArray(stockData) ? stockData : []).map((item) => item[key]).filter(Boolean))).sort();
 
     const getCellStyle = (max, unplanned) => {
-        if (!max
-            // || Number(max) === 0
-        ) {
+        const maxNum = Number(max);
+        const unplannedNum = Number(unplanned);
+
+        if (isNaN(maxNum) || maxNum === 0) {
             return {
                 backgroundColor: '#f0f0f0',
                 color: '#888',
                 fontWeight: 'bold',
-            }; // Grey bg for 0 max_level
+            }; // Grey for missing or 0 max_level
         }
 
-        const percentage = (Number(unplanned) / Number(max)) * 100;
+        const percentage = (unplannedNum / maxNum) * 100;
 
         if (percentage > 100) {
             return {
@@ -207,6 +222,7 @@ const handleExportCSV = (data) => {
 
 
 
+
     if (loading) return <p>Loading stock data...</p>;
     if (error) return <p>Error: {error}</p>;
     if (!stockData || !Array.isArray(stockData)) return <p>No data found.</p>;
@@ -217,8 +233,7 @@ const handleExportCSV = (data) => {
                 className={styles.tableTitle}
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }}
-            >
-                Live Stock Analysis
+            >Live Stock
                 <span className={styles.liveDot} />
             </motion.h1>
 

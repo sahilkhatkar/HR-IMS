@@ -4,6 +4,7 @@ import masterDataReducer from './slices/masterDataSlice';
 import stockDataReducer from './slices/liveStockDataSlice';
 import formResponsesReducer from './slices/formResponsesSlice';
 import damageStockDataReducer from './slices/damageItemsEntriesSlice';
+import salesOrderDataReducer from './slices/salesOrderDataSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,5 +13,6 @@ export const store = configureStore({
     liveStockData: stockDataReducer,
     formResponses: formResponsesReducer,
     damageStock: damageStockDataReducer,
+    salesOrder: salesOrderDataReducer,
   },
 });
