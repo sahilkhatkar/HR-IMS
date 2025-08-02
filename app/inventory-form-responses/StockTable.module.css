@@ -1,77 +1,67 @@
-/* Base Container */
+/* === Root Container === */
 .container {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
-  /* min-height: 100vh; */
   font-family: var(--typography-fontPrimary);
   color: var(--color-text-col1);
 }
 
-/* Headings */
+/* === Heading === */
 .heading {
   text-align: center;
   font-size: 2rem;
+  font-weight: 600;
+  color: var(--colors-darkBlue);
 }
 
-/* Filters */
-.filters,
-.dateRange {
+/* === Toolbar Section === */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 16px 20px;
+  background: var(--colors-white);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.leftControls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-grow: 1;
+  min-width: 250px;
+}
+
+@media (min-width: 600px) {
+  .leftControls {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.rightControls {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
+  gap: 1rem;
+  margin-left: auto;
 }
 
-.filters label,
-.dateRange label {
-  display: flex;
-  flex-direction: column;
-  font-size: var(--font-size-s);
-  color: var(--colors-inputLabel);
-}
-
-.filters input,
-.dateRange input {
-  padding: 6px;
-  border-radius: 4px;
-  border: 1px solid var(--colors-inputBorder);
-  font-size: var(--font-size-s);
-  color: var(--colors-inputValue);
-  min-width: 120px;
-}
-
-/* Search Input */
+/* === Inputs === */
 .searchInput,
 .animatedInput {
-  padding: 8px 12px;
-  border: 1px solid var(--colors-inputBorder);
-  border-radius: 6px;
-  font-size: var(--font-size-s);
   width: 100%;
   max-width: 250px;
-}
-
-.searchInput:focus,
-.searchInput:focus-visible,
-.searchInput:focus-within,
-.searchInput:active {
-  outline: none;
+  padding: 8px 12px;
+  font-size: var(--font-size-s);
+  border-radius: 6px;
   border: 1px solid var(--colors-inputBorder);
-  box-shadow: none;
-  transform: none;
-  transition: all 0.3s ease-in-out;
-}
-
-.animatedInput {
-  border: 2px solid var(--colors-inputBorder);
-  border-radius: 10px;
-  background: white;
+  background: #fff;
   transition: all 0.3s ease;
-  outline: none;
-  /* outline: 1px solid var(--color-primary-green); */
-  box-shadow: 0 0 0 0 rgba(0, 150, 255, 0.25);
 }
 
 .searchInput:focus,
@@ -79,25 +69,37 @@
   border-color: var(--colors-irisBlue);
   box-shadow: 0 0 0 4px var(--colors-irisBlue_15);
   transform: scale(1.02);
+  outline: none;
 }
 
-/* Export Button */
-.exportBtn {
-  padding: 8px 16px;
-  background: var(--colors-deYork);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s;
+/* === Date Range Inputs === */
+.dateRange {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-.exportBtn:hover {
-  background: var(--colors-deYork_30);
+.inputGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
 }
 
-/* Table Styles */
+.inputGroup label {
+  font-size: var(--font-size-s);
+  color: var(--colors-inputLabel);
+  min-width: 40px;
+}
+
+@media (max-width: 480px) {
+  .inputGroup {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* === Table === */
 .tableWrapper {
   overflow-x: auto;
   background: var(--colors-white);
@@ -127,7 +129,7 @@
   background: var(--colors-lynch_15);
 }
 
-/* Data Highlight */
+/* === Cell Highlights === */
 .positive {
   color: var(--color-primary-green);
   font-weight: bold;
@@ -142,8 +144,8 @@
 .outward {
   padding: 4px 10px;
   border-radius: 6px;
-  text-align: center;
   font-weight: 600;
+  text-align: center;
 }
 
 .inward {
@@ -156,7 +158,14 @@
   color: var(--colors-redPink);
 }
 
-/* Pagination */
+.remarksColumn {
+  max-width: 20rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+/* === Pagination === */
 .pagination {
   display: flex;
   justify-content: center;
@@ -166,12 +175,13 @@
 
 .pagination button {
   padding: 6px 12px;
-  border: none;
   background: var(--colors-irisBlue);
   color: white;
+  font-weight: 600;
+  border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-weight: 600;
+  transition: background 0.2s ease;
 }
 
 .pagination button:disabled {
@@ -179,7 +189,89 @@
   cursor: not-allowed;
 }
 
-/* Modal */
+/* === Export Button === */
+.exportBtn {
+  padding: 8px 16px;
+  background: var(--colors-deYork);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.exportBtn:hover {
+  background: var(--colors-deYork_30);
+}
+
+/* === Menu === */
+.menuWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.menuTrigger {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.menuTrigger:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.popupMenu {
+  position: absolute;
+  top: 38px;
+  right: 0;
+  background: white;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  z-index: 1000;
+  min-width: 180px;
+  padding: 6px 0;
+  animation: dropdownFade 0.15s ease-out;
+}
+
+.popupMenu button {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  width: 100%;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.popupMenu button:hover {
+  background-color: #f2f2f2;
+}
+
+.menuIcon {
+  font-size: 16px;
+  color: #666;
+}
+
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Modal === */
 .modalBackdrop {
   position: fixed;
   inset: 0;
@@ -195,23 +287,22 @@
   background: var(--colors-lynch_15);
   padding: 32px;
   border-radius: 16px;
-  max-width: 500px;
   width: 100%;
+  max-width: 500px;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-  color: var(--color-text-col1);
-  font-family: var(--typography-fontPrimary);
+  border: 2px solid var(--colors-irisBlue_30);
   display: flex;
   flex-direction: column;
   gap: 20px;
-  border: 2px solid var(--colors-irisBlue_30);
+  color: var(--color-text-col1);
 }
 
 .modalTitle {
   font-size: 1.6rem;
   text-align: center;
   background: linear-gradient(90deg, var(--colors-irisBlue), var(--colors-cerise));
-  background-clip: text;
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: bold;
 }
@@ -228,7 +319,7 @@
 .modalRow {
   display: flex;
   justify-content: space-between;
-  background: var(--colors-white);
+  background: white;
   padding: 10px 14px;
   border-radius: 8px;
   border-left: 4px solid var(--colors-irisBlue_75);
@@ -259,9 +350,9 @@
   padding: 10px 20px;
   background: var(--colors-redPink);
   color: white;
+  font-size: 1rem;
   border: none;
   border-radius: 6px;
-  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.3s ease;
@@ -271,91 +362,71 @@
   background: var(--colors-redPink_75);
 }
 
-/* Toolbar & Controls */
-.toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 1.5rem;
-  background: var(--colors-white);
-  padding: 16px 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.leftControls {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  flex-grow: 1;
-  min-width: 250px;
-}
-
-@media (min-width: 600px) {
-  .leftControls {
-    flex-direction: row;
-    align-items: center;
-  }
-}
-
-.rightControls,
-.controlsRight {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-left: auto;
-}
-
-/* Rows Per Page */
-.rowsPerPage {
-  font-size: var(--font-size-s);
-  color: var(--colors-inputLabel);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.rowsPerPage select {
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid var(--colors-inputBorder);
-  font-size: var(--font-size-s);
-}
-
-/* Info Text */
+/* === Utility === */
 .entriesInfo {
   font-size: 14px;
   color: #666;
   text-align: right;
 }
 
-/* Input Group */
-.inputGroup {
+.rowsPerPage {
+  font-size: var(--font-size-s);
   display: flex;
   align-items: center;
-  gap: 8px;
-  position: relative;
-}
-
-.inputGroup label {
-  font-size: var(--font-size-s);
+  gap: 6px;
   color: var(--colors-inputLabel);
-  min-width: 40px;
 }
 
-@media (max-width: 480px) {
-  .inputGroup {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+.rowsPerPage select {
+  padding: 4px 8px;
+  font-size: var(--font-size-s);
+  border-radius: 4px;
+  border: 1px solid var(--colors-inputBorder);
 }
 
 
-.remarksColumn {
-  max-width: 20rem;
+.popupMenu {
+  position: absolute;
+  top: 38px;
+  right: 0;
+  background: #fff;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  z-index: 1000;
+  min-width: 200px;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: normal;
+  padding: 8px 0;
+}
+
+.popupMenu button {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  width: 100%;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border-left: 4px solid transparent;
+}
+
+.popupMenu button:hover {
+  background-color: #f5f5f5;
+  border-left: 4px solid var(--colors-irisBlue);
+}
+
+.menuIcon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.menuText {
+  background: linear-gradient(to right, var(--colors-irisBlue), var(--colors-cerise));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  letter-spacing: 0.3px;
 }

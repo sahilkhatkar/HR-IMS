@@ -2,7 +2,6 @@
 import { useState, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
-// import Select from 'react-select';
 import styles from './page.module.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -11,9 +10,6 @@ import TransferStockModal from '../components/TransferStockModal';
 import dynamic from 'next/dynamic';
 import { addResponseToResponses } from '../../store/slices/formResponsesSlice';
 const Select = dynamic(() => import('react-select'), { ssr: false });
-
-
-const script_live_stock_url = "https://script.google.com/macros/s/AKfycbxnnkkjOo5tAHHIKwucr6GrB2pBY4S0PrLUFBMwDkPaImpeGuRvFCDadzfAiq-E_LEeag/exec"
 
 export default function InventoryForm() {
 
@@ -61,20 +57,34 @@ export default function InventoryForm() {
         }));
 
     const filteredSaleOrderOptions = useMemo(() => {
-        if (!salesOrder || !Array.isArray(salesOrder)) return [];
+    if (!salesOrder || !Array.isArray(salesOrder)) return [];
 
-        const lowerInput = saleOrderInputValue.toLowerCase();
+    const lowerInput = saleOrderInputValue.toLowerCase();
 
-        return salesOrder
-            .filter(order =>
-                order.sales_order_no.toLowerCase().includes(lowerInput)
-            )
-            .slice(0, 30)
-            .map(order => ({
-                value: order.sales_order_no,
-                label: `${order.sales_order_no} (PI: ${order.pi}, Qty: ${order.qty_new_bags})`,
-            }));
-    }, [salesOrder, saleOrderInputValue]);
+    const filtered = salesOrder
+        .filter(order =>
+            order.sales_order_no.toLowerCase().includes(lowerInput)
+        )
+        .slice(0, 30)
+        .map(order => ({
+            value: order.sales_order_no,
+            label: `${order.sales_order_no} (PI: ${order.pi}, Qty: ${order.qty_new_bags})`,
+        }));
+
+    // Add static option for Advance Packing
+    const advancePackingOption = {
+        value: 'Advance Packing',
+        label: 'Advance Packing',
+    };
+
+    // Agar user "advance" ya similar kuch likhe to usko show karo
+    if ('advance packing'.includes(lowerInput)) {
+        filtered.unshift(advancePackingOption); // Add at the top
+    }
+
+    return filtered;
+}, [salesOrder, saleOrderInputValue]);
+
 
 
     function createNewRow() {

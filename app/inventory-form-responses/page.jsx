@@ -1,22 +1,24 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import styles from './StockTable.module.css';
 import { useSelector } from 'react-redux';
-import { IoIosSearch } from "react-icons/io";
+import { FiMoreVertical, FiDownload, FiRepeat, FiSettings } from 'react-icons/fi';
 
-function parseDate(str) {
+import styles from './StockTable.module.css';
+
+// Utility to parse DD-MM-YYYY to Date
+const parseDate = (str) => {
+    if (!str) return new Date(0);
     const [day, month, year] = str.split('-');
     return new Date(`${month} ${day}, ${year}`);
-}
+};
 
 export default function StockEntriesPage() {
-
     const { masterData = [] } = useSelector((state) => state.masterData);
-
     const { formResponses = [] } = useSelector((state) => state.formResponses);
 
+    const [menuOpen, setMenuOpen] = useState(false);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [page, setPage] = useState(1);
@@ -25,87 +27,62 @@ export default function StockEntriesPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedRow, setSelectedRow] = useState(null);
 
-    // const allKeys = useMemo(() => {
-    //     const keySet = new Set();
-    //     formResponses.forEach((entry) => Object.keys(entry).forEach((key) => keySet.add(key)));
-    //     return Array.from(keySet);
-    // }, [formResponses]);
-
-
+    // Build key list dynamically and include 'description'
     const allKeys = useMemo(() => {
-        const keySet = new Set();
-        formResponses.forEach((entry) => Object.keys(entry).forEach((key) => keySet.add(key)));
-        const keys = Array.from(keySet);
-
-        const itemCodeIndex = keys.indexOf('item_code');
-        if (itemCodeIndex !== -1) {
-            keys.splice(itemCodeIndex, 0, 'description'); // insert before item_code
-        }
-
-        return keys;
+        const keys = new Set();
+        formResponses.forEach((entry) => Object.keys(entry).forEach((key) => keys.add(key)));
+        const result = Array.from(keys);
+        const idx = result.indexOf('item_code');
+        if (idx !== -1) result.splice(idx, 0, 'description');
+        return result;
     }, [formResponses]);
 
-
+    // Pre-map masterData for faster lookup
+    const itemCodeMap = useMemo(() => {
+        const map = {};
+        masterData.forEach((item) => {
+            map[item.item_code] = item.description || '';
+        });
+        return map;
+    }, [masterData]);
 
     const filtered = useMemo(() => {
-        const reversed = [...formResponses].reverse();
-        return reversed.filter((entry) => {
-            const d = parseDate(entry.date);
-            const from = startDate ? new Date(startDate) : null;
-            const to = endDate ? new Date(endDate) : null;
+        const lowerSearch = searchTerm.toLowerCase();
+        const from = startDate ? new Date(startDate) : null;
+        const to = endDate ? new Date(endDate) : null;
 
-            const matchesDate = (!from || d >= from) && (!to || d <= to);
+        return [...formResponses].reverse().filter((entry) => {
+            const entryDate = parseDate(entry.date);
+            const matchesDate = (!from || entryDate >= from) && (!to || entryDate <= to);
 
-
-            // const matchesSearch =
-            //     !searchTerm ||  
-            //     Object.values(entry)
-            //         .join(' ')
-            //         .toLowerCase()
-            //         .includes(searchTerm.toLowerCase());
-
-
-
-
-            const description = masterData.find((item) => item.item_code === entry.item_code)?.description || '';
-
-            const matchesSearch =
-                !searchTerm ||
-                (
-                    Object.values(entry).join(' ') + ' ' + description
-                ).toLowerCase().includes(searchTerm.toLowerCase());
-
+            const description = itemCodeMap[entry.item_code] || '';
+            const combined = `${Object.values(entry).join(' ')} ${description}`.toLowerCase();
+            const matchesSearch = !searchTerm || combined.includes(lowerSearch);
 
             return matchesDate && matchesSearch;
         });
-    }, [formResponses, startDate, endDate, searchTerm]);
+    }, [formResponses, startDate, endDate, searchTerm, itemCodeMap]);
 
     const sorted = useMemo(() => {
         if (!sortConfig.key) return filtered;
 
         return [...filtered].sort((a, b) => {
-            let valA = a[sortConfig.key];
-            let valB = b[sortConfig.key];
+            const getValue = (entry) => {
+                if (sortConfig.key === 'description') return itemCodeMap[entry.item_code]?.toLowerCase() || '';
+                if (sortConfig.key === 'stock_qty') return parseFloat(entry.stock_qty) || 0;
+                if (sortConfig.key === 'date') return parseDate(entry.date);
+                if (sortConfig.key === 'timestamp') return new Date(entry.timestamp);
+                return entry[sortConfig.key]?.toString().toLowerCase() || '';
+            };
 
-            if (sortConfig.key === 'stock_qty') {
-                valA = parseFloat(valA) || 0;
-                valB = parseFloat(valB) || 0;
-            } else if (sortConfig.key === 'date') {
-                valA = parseDate(valA);
-                valB = parseDate(valB);
-            } else if (sortConfig.key === 'timestamp') {
-                valA = new Date(valA);
-                valB = new Date(valB);
-            } else {
-                valA = valA?.toString().toLowerCase() || '';
-                valB = valB?.toString().toLowerCase() || '';
-            }
+            const valA = getValue(a);
+            const valB = getValue(b);
 
             if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
             if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
             return 0;
         });
-    }, [filtered, sortConfig]);
+    }, [filtered, sortConfig, itemCodeMap]);
 
     const totalPages = Math.ceil(sorted.length / pageSize);
     const paginated = sorted.slice((page - 1) * pageSize, page * pageSize);
@@ -117,40 +94,41 @@ export default function StockEntriesPage() {
         }));
     };
 
-    const handleExport = () => {
-        const csv = [
-            ['S. No.', ...allKeys], // Include S. No. in CSV
-            ...filtered.map((row, index) =>
-                [
-                    `"${index + 1}"`,
-                    ...allKeys.map((key) =>
-                    // Only include the keys that are in allKeys
-                    // `"${row[key] ?? ''}"`
-
-                    {
-                        if (key === 'description') {
-                            const matched = masterData.find((item) => item.item_code === row.item_code);
-                            return `"${matched?.description ?? ''}"`;
-                        }
-                        return `"${row[key] ?? ''}"`;
+    const handleExport = useCallback(() => {
+        const csvRows = [
+            ['S. No.', ...allKeys],
+            ...filtered.map((entry, index) => {
+                const row = [index + 1];
+                allKeys.forEach((key) => {
+                    if (key === 'description') {
+                        row.push(`"${itemCodeMap[entry.item_code] || ''}"`);
+                    } else {
+                        row.push(`"${entry[key] ?? ''}"`);
                     }
-                    )
-                ].join(',')
-            ),
-        ].join('\n');
-
+                });
+                return row.join(',');
+            }),
+        ];
+        const csv = csvRows.join('\n');
         const blob = new Blob([csv], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        a.download = `stock-entries-${timestamp}.csv`;
-
+        a.download = `stock-entries-${new Date().toISOString().replace(/[:.]/g, '-')}.csv`;
         a.click();
         URL.revokeObjectURL(url);
-    };
+    }, [filtered, allKeys, itemCodeMap]);
 
-    console.log("all keys", allKeys);
+    // Auto-close menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (!e.target.closest(`.${styles.menuWrapper}`)) {
+                setMenuOpen(false);
+            }
+        };
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, []);
 
     return (
         <div className={styles.container}>
@@ -160,7 +138,6 @@ export default function StockEntriesPage() {
                 <div className={styles.leftControls}>
                     <input
                         type="text"
-                        // placeholder="🔍 Search entries..."
                         placeholder="Search entries..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -190,22 +167,90 @@ export default function StockEntriesPage() {
                             />
                         </div>
                     </div>
-
                 </div>
 
                 <div className={styles.rightControls}>
                     <label className={styles.rowsPerPage}>
                         Rows:
-                        <select value={pageSize} onChange={(e) => { setPage(1); setPageSize(parseInt(e.target.value)); }}>
+                        <select value={pageSize} onChange={(e) => { setPage(1); setPageSize(+e.target.value); }}>
                             {[5, 10, 25, 50, 100].map((size) => (
                                 <option key={size} value={size}>{size}</option>
                             ))}
                         </select>
                     </label>
-                    <button className={styles.exportBtn} onClick={handleExport}>⬇ Export CSV</button>
+
+                    <div className={styles.menuWrapper}>
+                        <button
+                            className={styles.menuTrigger}
+                            onClick={() => setMenuOpen((prev) => !prev)}
+                            aria-label="More options"
+                        >
+                            <FiMoreVertical size={20} />
+                        </button>
+
+                        <AnimatePresence>
+                            {menuOpen && (
+                                <motion.div
+                                    className={styles.popupMenu}
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -5 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.97 }}
+                                        onClick={() => { handleExport(); setMenuOpen(false); }}
+                                    >
+                                        <motion.span
+                                            className={styles.menuIcon}
+                                            animate={{ rotate: [0, 15, -15, 0] }}
+                                            transition={{ repeat: Infinity, duration: 2 }}
+                                            style={{ color: '#4CAF50' }}
+                                        >
+                                            <FiDownload />
+                                        </motion.span>
+                                        <span className={styles.menuText}>Export CSV</span>
+                                    </motion.button>
+
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.97 }}
+                                        onClick={() => setMenuOpen(false)}
+                                    >
+                                        <motion.span
+                                            className={styles.menuIcon}
+                                            animate={{ scale: [1, 1.2, 1] }}
+                                            transition={{ repeat: Infinity, duration: 1.5 }}
+                                            style={{ color: '#2196F3' }}
+                                        >
+                                            <FiRepeat />
+                                        </motion.span>
+                                        <span className={styles.menuText}>Transfer Stock</span>
+                                    </motion.button>
+
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.97 }}
+                                        onClick={() => setMenuOpen(false)}
+                                    >
+                                        <motion.span
+                                            className={styles.menuIcon}
+                                            animate={{ y: [0, -2, 2, 0] }}
+                                            transition={{ repeat: Infinity, duration: 1.2 }}
+                                            style={{ color: '#FF5722' }}
+                                        >
+                                            <FiSettings />
+                                        </motion.span>
+                                        <span className={styles.menuText}>More Options</span>
+                                    </motion.button>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
+                    </div>
                 </div>
             </div>
-
 
             <div className={styles.tableWrapper}>
                 <table className={styles.table}>
@@ -233,12 +278,9 @@ export default function StockEntriesPage() {
                                 >
                                     <td>{(page - 1) * pageSize + i + 1}</td>
                                     {allKeys.map((key) => {
-                                        let val = entry[key];
-
-                                        if (key === 'description') {
-                                            const matchedItem = masterData.find((item) => item.item_code === entry.item_code);
-                                            val = matchedItem?.description || '—';
-                                        }
+                                        let val = key === 'description'
+                                            ? itemCodeMap[entry.item_code] || '—'
+                                            : entry[key] ?? '-';
 
                                         const isQty = key === 'stock_qty';
                                         const isType = key === 'form_type';
@@ -246,13 +288,13 @@ export default function StockEntriesPage() {
                                         return (
                                             <td
                                                 key={key}
-                                                className={
-                                                    `${isQty ? (val < 0 ? styles.negative : styles.positive) : ''} 
-                ${isType ? (val === 'Inward' ? styles.inward : styles.outward) : ''} 
-                ${key === 'remarks' ? styles.remarksColumn : ''}`
-                                                }
+                                                className={[
+                                                    isQty ? (val < 0 ? styles.negative : styles.positive) : '',
+                                                    isType ? (val === 'Inward' ? styles.inward : styles.outward) : '',
+                                                    key === 'remarks' ? styles.remarksColumn : ''
+                                                ].join(' ').trim()}
                                             >
-                                                {val ?? '-'}
+                                                {val}
                                             </td>
                                         );
                                     })}
@@ -288,7 +330,11 @@ export default function StockEntriesPage() {
                             {allKeys.map((key) => (
                                 <div className={styles.modalRow} key={key}>
                                     <span className={styles.modalKey}>{key.replace(/_/g, ' ')}</span>
-                                    <span className={styles.modalValue}>{selectedRow[key] ?? '-'}</span>
+                                    <span className={styles.modalValue}>
+                                        {key === 'description'
+                                            ? itemCodeMap[selectedRow.item_code] || '-'
+                                            : selectedRow[key] ?? '-'}
+                                    </span>
                                 </div>
                             ))}
                         </div>
