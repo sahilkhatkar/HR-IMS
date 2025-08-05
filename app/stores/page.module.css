@@ -71,7 +71,7 @@
   /* Or match your table background */
   z-index: 2;
   /* Ensures header stays above rows */
-  border-bottom: 2px solid #ddd;
+  border-bottom: 2px solid var(--border, #eee);
   /* Optional visual cue */
 }
 
@@ -87,7 +87,7 @@
 }
 
 .tableRow:hover {
-  background-color: #f1f9ff;
+  background-color: var(--border);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   cursor: pointer;
 }
@@ -119,11 +119,13 @@
 
 .iconBtn:hover {
   color: #007bff;
+  color: var(--primary, #007bff);
   transform: scale(1.1);
 }
 
 .tableWrapper {
-  background-color: var(--background);
+  background-color: var(--card-bg);
+  color: var(--text, #333);
   border-radius: 10px;
   width: 100%;
   overflow-x: auto;
@@ -138,7 +140,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-block: 1rem;
   gap: 1rem;
 }
 
@@ -390,4 +391,97 @@
 
 .exportBtn:hover {
   background-color: #218838;
+}
+
+
+.percentageBubble {
+  position: absolute;
+  top: 50%;
+  right: -70%;
+  transform: translateY(-50%) scale(1);
+  /* background-color: var(--accent); */
+  color: var(--primary, #fff);
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  white-space: nowrap;
+  animation: floatAround 5s infinite ease-in-out;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+  z-index: 1;
+}
+
+/* New keyframes to simulate circular-ish floating motion */
+@keyframes floatAround {
+  0% {
+    transform: translateY(-50%) translateX(0) scale(1);
+  }
+
+  25% {
+    transform: translateY(-60%) translateX(5px) scale(1.05);
+  }
+
+  50% {
+    transform: translateY(-50%) translateX(0) scale(0.98);
+  }
+
+  75% {
+    transform: translateY(-40%) translateX(-5px) scale(1.03);
+  }
+
+  100% {
+    transform: translateY(-50%) translateX(0) scale(1);
+  }
+}
+
+
+
+.tableFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  background: var(--card-bg);
+  color: var(--primary, #333);
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: var(--shadow-light);
+}
+
+.entriesInfo {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.filteredInfo {
+  color: var(--colors-irisBlue);
+  font-weight: 600;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  align-items: center;
+}
+
+.pagination button {
+  background: var(--primary);
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.pagination button:hover {
+  background: var(--primary-dark);
+}
+
+.pagination button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }

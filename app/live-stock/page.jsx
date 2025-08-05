@@ -176,8 +176,18 @@ export default function Livestock() {
     const startIndex = (currentPage - 1) * rowsPerPage;
     const currentItems = sortedData.slice(startIndex, startIndex + rowsPerPage);
 
-    const getUniqueValues = (key) =>
-        Array.from(new Set((Array.isArray(stockData) ? stockData : []).map((item) => item[key]).filter(Boolean))).sort();
+    const getUniqueValues = (key) => {
+        if (key === 'plant_name') {
+            return ['CHETRAM', 'HANUMAN', 'PK', 'R.T AGRO', 'SURYA', 'VIRANIYA']; // 👈 Add your own plant names here
+        }
+
+        return Array.from(new Set(
+            (Array.isArray(stockData) ? stockData : [])
+                .map((item) => item[key])
+                .filter(Boolean)
+        )).sort();
+    };
+
 
     const getCellStyle = (max, unplanned) => {
         const maxNum = Number(max);
