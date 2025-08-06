@@ -57,33 +57,33 @@ export default function InventoryForm() {
         }));
 
     const filteredSaleOrderOptions = useMemo(() => {
-    if (!salesOrder || !Array.isArray(salesOrder)) return [];
+        if (!salesOrder || !Array.isArray(salesOrder)) return [];
 
-    const lowerInput = saleOrderInputValue.toLowerCase();
+        const lowerInput = saleOrderInputValue.toLowerCase();
 
-    const filtered = salesOrder
-        .filter(order =>
-            order.sales_order_no.toLowerCase().includes(lowerInput)
-        )
-        .slice(0, 30)
-        .map(order => ({
-            value: order.sales_order_no,
-            label: `${order.sales_order_no} (PI: ${order.pi}, Qty: ${order.qty_new_bags})`,
-        }));
+        const filtered = salesOrder
+            .filter(order =>
+                order.sales_order_no.toLowerCase().includes(lowerInput)
+            )
+            .slice(0, 30)
+            .map(order => ({
+                value: order.sales_order_no,
+                label: `${order.sales_order_no} (PI: ${order.pi}, Qty: ${order.qty_new_bags})`,
+            }));
 
-    // Add static option for Advance Packing
-    const advancePackingOption = {
-        value: 'Advance Packing',
-        label: 'Advance Packing',
-    };
+        // Add static option for Advance Packing
+        const advancePackingOption = {
+            value: 'Advance Packing',
+            label: 'Advance Packing',
+        };
 
-    // Agar user "advance" ya similar kuch likhe to usko show karo
-    if ('advance packing'.includes(lowerInput)) {
-        filtered.unshift(advancePackingOption); // Add at the top
-    }
+        // Agar user "advance" ya similar kuch likhe to usko show karo
+        if ('advance packing'.includes(lowerInput)) {
+            filtered.unshift(advancePackingOption); // Add at the top
+        }
 
-    return filtered;
-}, [salesOrder, saleOrderInputValue]);
+        return filtered;
+    }, [salesOrder, saleOrderInputValue]);
 
 
 
@@ -176,6 +176,9 @@ export default function InventoryForm() {
         //     date: payload.date
         // }));
 
+        const now = new Date();
+        const pad = (num) => String(num).padStart(2, '0');
+
         const flatArray = payload.entries.map(entry => ({
             item_code: entry.itemCode,
             stock_qty: isInward ? entry.qty : -Math.abs(entry.qty),
@@ -184,9 +187,9 @@ export default function InventoryForm() {
             remarks: entry.remarks,
             form_type: payload.formType,
             date: payload.date,
-            timestamp: new Date().toLocaleString('en-GB').replace(',', ''),
+            // timestamp: new Date().toLocaleString('en-US').replace(',', ''),
+            timestamp: `${pad(now.getMonth() + 1)}/${pad(now.getDate())}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`,
         }));
-
 
         try {
             const response = await fetch('/api/stock-in-out-entries', {

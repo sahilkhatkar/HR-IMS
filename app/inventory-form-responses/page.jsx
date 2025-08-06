@@ -4,8 +4,9 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSelector } from 'react-redux';
 import { FiMoreVertical, FiDownload, FiRepeat, FiSettings } from 'react-icons/fi';
+import InOutFormModal from './InOutFormModal';
 
-import styles from './StockTable.module.css';
+import styles from './page.module.css';
 
 // Utility to parse DD-MM-YYYY to Date
 const parseDate = (str) => {
@@ -17,6 +18,10 @@ const parseDate = (str) => {
 export default function StockEntriesPage() {
     const { masterData = [] } = useSelector((state) => state.masterData);
     const { formResponses = [] } = useSelector((state) => state.formResponses);
+
+
+    const [showInOutModal, setShowInOutModal] = useState(false);
+
 
     const [menuOpen, setMenuOpen] = useState(false);
     const [startDate, setStartDate] = useState('');
@@ -169,6 +174,13 @@ export default function StockEntriesPage() {
                     </div>
                 </div>
 
+                <button
+                    className={styles.addBtn}
+                    onClick={() => setShowInOutModal(true)}
+                >
+                    ➕ Add (In-Out)
+                </button>
+
                 <div className={styles.rightControls}>
                     <label className={styles.rowsPerPage}>
                         Rows:
@@ -314,6 +326,14 @@ export default function StockEntriesPage() {
                 <span>Page {page} of {totalPages}</span>
                 <button onClick={() => setPage((p) => Math.min(p + 1, totalPages))} disabled={page === totalPages}>Next →</button>
             </div>
+
+
+            <InOutFormModal
+                isOpen={showInOutModal}
+                onClose={() => setShowInOutModal(false)}
+            />
+
+
 
             {selectedRow && (
                 <div className={styles.modalBackdrop} onClick={() => setSelectedRow(null)}>

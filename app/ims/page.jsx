@@ -186,7 +186,7 @@ export default function AnimatedTable() {
             </select>
           </motion.div>
 
-          <Link href="/additems">
+          <Link href="/add-items">
             <motion.button
               className={styles.addButton}
               whileHover={{ scale: 1.05 }}

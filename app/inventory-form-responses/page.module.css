@@ -430,3 +430,19 @@
   font-weight: 700;
   letter-spacing: 0.3px;
 }
+
+
+.addBtn {
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.addBtn:hover {
+    background-color: #125ea3;
+}
