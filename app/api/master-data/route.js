@@ -1,6 +1,6 @@
 // app/api/fetch-sheet-data/route.js
 import { NextResponse } from 'next/server';
-import { fetchMasterData, appendItemsToSheet } from '../../lib/masterData';
+import { fetchMasterData, appendItemsToSheet, appendToFieldMaster } from '../../lib/masterData';
 
 export async function GET(req) {
   //   const { searchParams } = new URL(req.url);
@@ -27,6 +27,7 @@ export async function POST(req) {
     }
 
     const result = await appendItemsToSheet(items);
+    await appendToFieldMaster(items);
 
     const itemCodes = items.map((item) => item.item_code).filter(Boolean);
 

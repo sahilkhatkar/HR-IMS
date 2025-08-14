@@ -215,7 +215,7 @@ export default function StockEntriesPage() {
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
-                                    onClick={() => setSelectedRow(entry)}
+                                    onDoubleClick={() => setSelectedRow(entry)}
                                     className={styles.row}
                                 >
                                     <td>{(page - 1) * pageSize + i + 1}</td>

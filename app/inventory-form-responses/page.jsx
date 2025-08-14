@@ -285,7 +285,8 @@ export default function StockEntriesPage() {
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
-                                    onClick={() => setSelectedRow(entry)}
+                                    
+                                    onDoubleClick={() => setSelectedRow(entry)}
                                     className={styles.row}
                                 >
                                     <td>{(page - 1) * pageSize + i + 1}</td>
@@ -302,11 +303,17 @@ export default function StockEntriesPage() {
                                                 key={key}
                                                 className={[
                                                     isQty ? (val < 0 ? styles.negative : styles.positive) : '',
-                                                    isType ? (val === 'Inward' ? styles.inward : styles.outward) : '',
+                                                    isType ? (val === 'Inward' ? styles.physical : val === 'Outward' ? styles.outward : styles.inward) : '',
                                                     key === 'remarks' ? styles.remarksColumn : ''
                                                 ].join(' ').trim()}
                                             >
-                                                {val}
+                                                {key === 'form_type' && entry.remarks === 'Data from Inward'
+                                                    ? 'Inward'
+                                                    : val === 'Inward'
+                                                        ? 'Physical'
+                                                        : val === 'Outward'
+                                                            ? 'Outward'
+                                                            : val}
                                             </td>
                                         );
                                     })}

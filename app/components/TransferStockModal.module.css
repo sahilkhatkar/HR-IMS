@@ -107,7 +107,7 @@
   border-radius: 50%;
   border: none;
   font-size: 1.2rem;
-  color: var(--primary-light, #666);
+  color: var(--primary, #666);
   background: #f1f1f1;
   background: var(--border, #f1f1f1);
   align-self: center;
@@ -173,7 +173,7 @@
   width: 100%;
   padding: 0.75rem;
   background-color: var(--primary, #1570ef);
-  color: var(--text);
+  color: var(--bg);
   font-weight: 600;
   font-size: 1rem;
   border: none;

@@ -9,20 +9,9 @@ export default function SettingsPage() {
 
     return (
         <div className={styles.container}>
-            {/* <h1>Settings</h1> */}
-
             <div className={styles.section}>
-
-                <CustomDropdown
-                    label="Choose Theme"
-                    options={availableThemes}
-                    selected={theme}
-                    onSelect={setTheme}
-                />
-
-
-                {/* <label htmlFor="themeSelect">Choose Theme:</label> */}
-                {/* <select
+                <label htmlFor="themeSelect">Choose Theme:</label>
+                <select
                     id="themeSelect"
                     value={theme}
                     onChange={(e) => setTheme(e.target.value)}
@@ -33,9 +22,8 @@ export default function SettingsPage() {
                             {t.charAt(0).toUpperCase() + t.slice(1)}
                         </option>
                     ))}
-                </select> */}
+                </select>
             </div>
-
 
             <div className={styles.previewCard}>
                 <h3>Theme Preview</h3>

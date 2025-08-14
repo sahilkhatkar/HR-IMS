@@ -3,18 +3,17 @@
   flex-direction: column;
   flex: 1;
   gap: 1rem;
-  /* or 100% if used inside a layout */
   padding: 1rem;
   font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
   overflow: hidden;
-  /* prevent internal scroll */
 }
 
 .heading {
   font-size: 1.75rem;
   font-weight: 700;
-  /* margin-bottom: 1.5rem; */
-  color: var(--color-primary-blue);
+  color: var(--primary);
 }
 
 .tableWrapper {
@@ -22,40 +21,42 @@
   flex-shrink: 1;
   overflow: hidden;
   overflow-x: auto;
-  background: white;
+  background: var(--card-bg);
   border-radius: 12px;
   padding: 1rem;
-  /* border: 1px solid #eee; */
+  border: 1px solid var(--border);
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.875rem;
+  color: var(--text);
 }
 
 .table th,
 .table td {
-  /* border: 1px solid #eee; */
   padding: 0.75rem;
   white-space: nowrap;
   text-align: left;
 }
 
 .required {
-  color: red;
+  color: var(--accent);
 }
 
 .inputField {
   width: 100%;
   padding: 0.5rem;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
   transition: border 0.2s ease;
 }
 
 .inputField:focus {
-  border-color: #1976d2;
+  border-color: var(--primary);
   outline: none;
 }
 
@@ -64,8 +65,8 @@
 }
 
 .removeBtn {
-  background: #ff4d4f;
-  color: white;
+  background: var(--accent);
+  color: var(--card-bg);
   font-size: 1.1rem;
   border: none;
   padding: 0.3rem 0.7rem;
@@ -86,8 +87,8 @@
 
 .addRowBtn,
 .submitBtn {
-  background: #1976d2;
-  color: white;
+  background: var(--primary);
+  color: var(--card-bg);
   border: none;
   font-weight: 600;
   padding: 0.75rem 1.5rem;
@@ -97,32 +98,30 @@
 }
 
 .addRowBtn {
-  background: var(--color-completed-order);
+  background: var(--secondary);
 }
 
 .addRowBtn:hover {
-  background:  #218838;
-
+  background: var(--hover-bg);
 }
 
 .submitBtn:hover {
-  background: #115293;
+  background: var(--primary-light);
 }
 
 .toast {
   margin-top: 1rem;
-  background: #4caf50;
-  color: white;
+  background: var(--secondary);
+  color: var(--text);
   padding: 0.8rem 1.5rem;
   border-radius: 8px;
   font-weight: 500;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
 }
 
-
 .previewBtn {
-  background-color: #555;
-  color: white;
+  background-color: var(--primary-light);
+  color: var(--text);
   padding: 0.5em 1em;
   border: none;
   border-radius: 5px;

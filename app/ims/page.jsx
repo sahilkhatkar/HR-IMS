@@ -12,6 +12,9 @@ import Link from 'next/link';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// import ModalWrapper from './ModalWrapper';
+// import AddItemsForm from './AddItemsForm';
+
 const ITEMS_PER_PAGE = 10;
 
 export default function AnimatedTable() {
@@ -40,6 +43,8 @@ export default function AnimatedTable() {
     { key: 'pack_type', label: 'Pack Type' },
     { key: 'hsn_code', label: 'HSN Code' },
   ];
+
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const getUniqueValues = (key) =>
     Array.from(new Set((Array.isArray(masterData) ? masterData : []).map((item) => item[key]).filter(Boolean))).sort();
@@ -97,6 +102,24 @@ export default function AnimatedTable() {
       >
         Welcome to Master IMS
       </motion.h1>
+
+
+      {/* <button
+        style={{
+          padding: '0.75rem 1.5rem',
+          fontWeight: 'bold',
+          backgroundColor: '#1976d2',
+          color: 'white',
+          borderRadius: '6px',
+          border: 'none',
+          cursor: 'pointer'
+        }}
+        onClick={() => setIsFormOpen(true)}
+      >
+        + Add New Item
+      </button> */}
+
+
 
       {/* Search bar */}
       <div className={styles.searchBarWrapper}>
@@ -277,6 +300,21 @@ export default function AnimatedTable() {
       {/* Modals */}
       {selectedItem && <EditModal item={selectedItem} onClose={() => setSelectedItem(null)} />}
       {infoItem && <InfoModal item={infoItem} onClose={() => setInfoItem(null)} />}
+
+
+      {/* Modal showing the form */}
+      {/* <ModalWrapper isOpen={isFormOpen} onClose={() => setIsFormOpen(false)}>
+        <AddItemsForm
+          onClose={() => setIsFormOpen(false)}
+          pack_sizeOptions={['Small', 'Medium', 'Large']}
+          pack_typeOptions={['Box', 'Bag', 'Bottle']}
+          hsn_codeOptions={['1234', '5678']}
+          lead_timeOptions={['1 Day', '3 Days']}
+          unitOptions={['Kg', 'Litre']}
+          plant_nameOptions={['Plant A', 'Plant B']}
+          seasonOptions={['Summer', 'Winter']}
+        />
+      </ModalWrapper> */}
 
       {/* Toasts */}
       <ToastContainer position="top-right" autoClose={3000} />

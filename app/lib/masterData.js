@@ -136,3 +136,65 @@ export async function appendItemsToSheet(items) {
 
   return appendRes.data;
 }
+
+export async function appendToFieldMaster(items) {
+  const base64Credentials = process.env.GOOGLE_CREDENTIALS;
+  if (!base64Credentials) {
+    throw new Error('GOOGLE_CREDENTIALS environment variable is missing');
+  }
+
+  const decoded = Buffer.from(base64Credentials, 'base64').toString('utf8');
+  const credentials = JSON.parse(decoded);
+
+  const auth = new google.auth.GoogleAuth({
+    credentials,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
+
+  const sheets = google.sheets({ version: 'v4', auth });
+
+  const SHEET_ID_FIELD_MASTER = '1GuIm8_z7RTY3udA6-3PdoH1rYHb49sKBuSJxAAvw12Y';
+  const SHEET_NAME_FIELD_MASTER = 'Field Master';
+
+  // 1️⃣ Get headers from "Field Master"
+  const range = `${SHEET_NAME_FIELD_MASTER}!A1:1`;
+  const headerRes = await sheets.spreadsheets.values.get({
+    spreadsheetId: SHEET_ID_FIELD_MASTER,
+    range,
+  });
+
+  const headers = headerRes.data.values[0];
+  const headerKeys = headers.map(h =>
+    h.toLowerCase().replace(/\s+/g, '_')
+  );
+
+  // Find the index of ItemCode and packagingTypes
+  const itemCodeIndex = headerKeys.indexOf('itemcode');
+  const packagingTypesIndex = headerKeys.indexOf('packagingtypes');
+
+  if (itemCodeIndex === -1 || packagingTypesIndex === -1) {
+    throw new Error('ItemCode or packagingTypes column not found in Field Master sheet');
+  }
+
+  // 2️⃣ Prepare values for append
+  const values = items.map(item => {
+    return headers.map((_, idx) => {
+      if (idx === itemCodeIndex) return item.item_code || '';
+      if (idx === packagingTypesIndex) return item.description || '';
+      return ''; // leave other columns empty
+    });
+  });
+
+  // 3️⃣ Append data
+  const appendRes = await sheets.spreadsheets.values.append({
+    spreadsheetId: SHEET_ID_FIELD_MASTER,
+    range: SHEET_NAME_FIELD_MASTER,
+    valueInputOption: 'USER_ENTERED',
+    insertDataOption: 'INSERT_ROWS',
+    requestBody: {
+      values,
+    },
+  });
+
+  return appendRes.data;
+}

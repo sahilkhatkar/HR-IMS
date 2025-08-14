@@ -6,10 +6,6 @@ import { useEffect, useRef } from 'react';
 export default function InfoModal({ item, onClose }) {
   if (!item) return null;
 
-  console.log("items::", item);
-
-
-
   const modalRef = useRef();
 
   // Close when clicked outside

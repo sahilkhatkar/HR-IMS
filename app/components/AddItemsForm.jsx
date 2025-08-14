@@ -12,15 +12,13 @@ import { addItemsToMasterData } from '../../store/slices/masterDataSlice'; // Ad
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { VscDiffAdded } from "react-icons/vsc";
 
 const fields = {
   description: { label: 'Description', type: 'text', required: true },
-  pack_size: { label: 'Pack Size', type: 'select', required: false },
-  pack_type: { label: 'Pack Type', type: 'select', required: false },
+  pack_size: { label: 'Pack Size', type: 'select', required: true },
+  pack_type: { label: 'Pack Type', type: 'select', required: true },
   unit: { label: 'Unit', type: 'select', required: true },
-  hsn_code: { label: 'HSN Code', type: 'select', required: false },
-  plant_name: { label: 'Plant', type: 'select', required: false },
+  hsn_code: { label: 'HSN Code', type: 'select', required: true },
   lead_time: { label: 'Lead Time', type: 'select', required: false },
   max_level: { label: 'Max Level', type: 'text', required: false },
   season: { label: 'Season', type: 'select', required: true },
@@ -177,9 +175,8 @@ export default function AddItemsForm({
   return (
     <form onSubmit={handleSubmit} className={styles.pageContainer}>
       <h2 className={styles.heading}>
-        {/* <VscDiffAdded /> */}
-       Master IMS
-       </h2>
+        Master IMS
+      </h2>
 
       <div className={styles.tableWrapper}>
         <table className={styles.table}>

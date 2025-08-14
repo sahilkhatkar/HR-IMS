@@ -6,6 +6,7 @@ import styles from './page.module.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import TransferStockModal from '../components/TransferStockModal';
+import CustomDropdown from '../components/CustomDropdown';
 
 import dynamic from 'next/dynamic';
 import { addResponseToResponses } from '../../store/slices/formResponsesSlice';
@@ -67,8 +68,8 @@ export default function InventoryForm() {
             )
             .slice(0, 30)
             .map(order => ({
-                value: order.sales_order_no,
-                label: `${order.sales_order_no} (PI: ${order.pi}, Qty: ${order.qty_new_bags})`,
+                value: `${order.sales_order_no}_${order.brand_quality_item_no}`,
+                label: `${order.sales_order_no} :: ${order.brand_quality_item_no} (PI: ${order.pi}, Qty: ${order.qty_new_bags})`,
             }));
 
         // Add static option for Advance Packing
@@ -256,7 +257,16 @@ export default function InventoryForm() {
                 </h2>
 
 
-                <button className={styles.button} onClick={() => setIsOpen(true)}>Transfer Stock</button>
+                <motion.button
+                    className={styles.button}
+                    onClick={() => setIsOpen(true)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: 'spring', stiffness: 300 }}
+                >
+                    Transfer Stock
+                </motion.button>
+
                 <TransferStockModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
 
 
@@ -306,7 +316,7 @@ export default function InventoryForm() {
                         {rows.map((row, index) => (
                             <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>
+                                <td >
                                     <Select
                                         className={styles.reactSelect}
                                         placeholder="Select item code..."
@@ -324,7 +334,47 @@ export default function InventoryForm() {
                                         onChange={(selected) => handleItemSelect(index, selected)}
                                         isClearable
                                         isSearchable
+
+                                        styles={{
+                                            option: (base, state) => ({
+                                                ...base,
+                                                backgroundColor: state.isSelected
+                                                    ? 'var(--card-bg)'
+                                                    : state.isFocused
+                                                        ? 'var(--primary-light)'
+                                                        : 'var(--bg)',
+                                                color: state.isSelected ? 'var(--primary)' : 'var(--text)',
+                                                cursor: 'pointer',
+                                            }),
+                                            singleValue: (base) => ({
+                                                ...base,
+                                                color: 'var(--primary)',
+                                                fontWeight: 'bold',
+                                            }),
+                                            control: (base) => ({
+                                                ...base,
+                                                boxShadow: 'none',
+                                                '&:hover': {
+                                                    borderColor: 'var(--primary)',
+                                                },
+                                            }),
+                                        }}
                                     />
+
+                                    {/* <CustomDropdown
+                                        options={filteredItemOptions.map(opt => opt.label)}
+                                        selected={
+                                            row.itemCode
+                                                ? allItemOptions.find(opt => opt.value === row.itemCode)?.label || 'Select item'
+                                                : ''
+                                        }
+                                        onSelect={(label) => {
+                                            const selected = allItemOptions.find(opt => opt.label === label);
+                                            handleItemSelect(index, selected);
+                                        }}
+                                        searchable
+                                        clearable
+                                    /> */}
 
                                     {row.description && (
                                         <div className={styles.itemDescription}>{row.description}</div>
@@ -347,7 +397,7 @@ export default function InventoryForm() {
                                 <td>
                                     <Select
                                         className={styles.reactSelect}
-                                        placeholder="Select plant..."
+                                        placeholder="Select plant"
                                         value={
                                             row.plant
                                                 ? { value: row.plant, label: row.plant }
@@ -356,25 +406,45 @@ export default function InventoryForm() {
                                         options={allPlantOptions}
                                         onChange={(selected) => handleChange(index, 'plant', selected?.value || '')}
                                         isClearable
+
+                                        styles={{
+                                            option: (base, state) => ({
+                                                ...base,
+                                                backgroundColor: state.isSelected
+                                                    ? 'var(--card-bg)'
+                                                    : state.isFocused
+                                                        ? 'var(--primary-light)'
+                                                        : 'var(--bg)',
+                                                color: state.isSelected ? 'var(--primary)' : 'var(--text)',
+                                                cursor: 'pointer',
+                                            }),
+                                            singleValue: (base) => ({
+                                                ...base,
+                                                color: 'var(--primary)',
+                                                fontWeight: 'bold',
+                                            }),
+                                            control: (base) => ({
+                                                ...base,
+                                                boxShadow: 'none',
+                                                '&:hover': {
+                                                    borderColor: 'var(--primary)',
+                                                },
+                                            }),
+                                        }}
                                     />
+
+
+                                    {/* <CustomDropdown
+                                        options={allPlantOptions.map(opt => opt.label)}
+                                        selected={row.plant || ''}
+                                        onSelect={(val) => handleChange(index, 'plant', val)}
+                                        searchable
+                                        clearable
+                                    /> */}
+
 
                                 </td>
                                 {!isInward && (
-
-
-
-                                    // <td>
-                                    //     <input
-                                    //         type="text"
-                                    //         value={row.saleOrder}
-                                    //         onChange={(e) => handleChange(index, 'saleOrder', e.target.value)}
-                                    //         placeholder="Enter Sale Order No."
-                                    //     />
-                                    //     {formErrors[index]?.saleOrder && (
-                                    //         <div className={styles.errorMsg}>{formErrors[index].saleOrder}</div>
-                                    //     )}
-                                    // </td>
-
 
                                     <td>
                                         <Select
@@ -396,17 +466,53 @@ export default function InventoryForm() {
                                             onChange={(selected) => handleChange(index, 'saleOrder', selected?.value || '')}
                                             isClearable
                                             isSearchable
+
+                                            styles={{
+                                            option: (base, state) => ({
+                                                ...base,
+                                                backgroundColor: state.isSelected
+                                                    ? 'var(--card-bg)'
+                                                    : state.isFocused
+                                                        ? 'var(--primary-light)'
+                                                        : 'var(--bg)',
+                                                color: state.isSelected ? 'var(--primary)' : 'var(--text)',
+                                                cursor: 'pointer',
+                                            }),
+                                            singleValue: (base) => ({
+                                                ...base,
+                                                color: 'var(--primary)',
+                                                fontWeight: 'bold',
+                                            }),
+                                            control: (base) => ({
+                                                ...base,
+                                                boxShadow: 'none',
+                                                '&:hover': {
+                                                    borderColor: 'var(--primary)',
+                                                },
+                                            }),
+                                        }}
                                         />
+
+                                        {/* <CustomDropdown
+                                            options={filteredSaleOrderOptions.map(opt => opt.label)}
+                                            selected={
+                                                row.saleOrder
+                                                    ? filteredSaleOrderOptions.find(opt => opt.value === row.saleOrder)?.label || ''
+                                                    : ''
+                                            }
+                                            onSelect={(label) => {
+                                                const selected = filteredSaleOrderOptions.find(opt => opt.label === label);
+                                                handleChange(index, 'saleOrder', selected?.value || '');
+                                            }}
+                                            searchable
+                                            clearable
+                                        /> */}
+
 
                                         {formErrors[index]?.saleOrder && (
                                             <div className={styles.errorMsg}>{formErrors[index].saleOrder}</div>
                                         )}
                                     </td>
-
-
-
-
-
 
                                 )}
                                 <td>
@@ -433,10 +539,25 @@ export default function InventoryForm() {
             </motion.div>
 
             <div className={styles.actionButtons}>
-                <button type="button" onClick={addRow} className={styles.addBtn}>
+                <motion.button
+                    type="button"
+                    onClick={addRow}
+                    className={styles.addBtn}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: 'spring', stiffness: 300 }}
+                >
                     Add Row
-                </button>
-                <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
+                </motion.button>
+
+                <motion.button
+                    type="submit"
+                    className={styles.submitBtn}
+                    disabled={isSubmitting}
+                    whileHover={!isSubmitting ? { scale: 1.05 } : {}}
+                    whileTap={!isSubmitting ? { scale: 0.95 } : {}}
+                    transition={{ type: 'spring', stiffness: 300 }}
+                >
                     {isSubmitting ? (
                         <>
                             <span className={styles.spinner}></span> Submitting...
@@ -444,7 +565,7 @@ export default function InventoryForm() {
                     ) : (
                         'Submit'
                     )}
-                </button>
+                </motion.button>
 
             </div>
 

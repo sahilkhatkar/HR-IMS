@@ -167,10 +167,23 @@
   --colors-error: #D92020;
 
 
-  --font-size-m: 1rem;
-  --font-size-s: .9rem;
-  --font-size-xs: .85rem;
+  --font-size-xs: 0.75rem;
+  /* smallest text */
+  --font-size-s: 0.85rem;
+  /* small text */
+  --font-size-m: 0.9rem;
+  /* medium text */
+  --font-size-l: 1rem;
+  /* default body text */
+  --font-size-xl: 1.6rem;
+  /* headings */
 
+  --layout-margin: 1rem;
+
+  --topbar-height: 60px;
+  --topbar-shadow: rgba(0, 0, 0, 0.03);
+  --logout-bg: transparent;
+  --logout-hover: var(--hover-bg);
 
 
   --layout-margin: 1rem;
@@ -275,15 +288,26 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  box-sizing: border-box;
+/* GLOBAL BOX-SIZING RESET */
+*,
+*::before,
+*::after {
   padding: 0;
   margin: 0;
+  box-sizing: border-box;
 }
+
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+input {
+  background: var(--card-bg);
+  color: var(--text);
+
+  outline-color: var(--primary);
 }
 
 /* h1 {
