@@ -12,14 +12,7 @@ export default function TransferStockModal({ isOpen, onClose }) {
 
   const dispatch = useDispatch();
   const { stockData, loading, error } = useSelector((state) => state.liveStockData);
-
-  // 1. Extract unique plant names
-  const plantOptions = useMemo(() => {
-    const names = stockData
-      .map(item => item.plant_name?.trim())
-      .filter(name => name); // remove empty, null, undefined
-    return [...new Set(names)];
-  }, [stockData]);
+  const { plantData } = useSelector((state) => state.plantData);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -49,7 +42,6 @@ export default function TransferStockModal({ isOpen, onClose }) {
       alert(`Qty cannot be more than available (${available}).`);
       return;
     }
-
 
     setIsSubmitting(true);
 
@@ -151,11 +143,11 @@ export default function TransferStockModal({ isOpen, onClose }) {
   }, []);
 
   useEffect(() => {
-    if (plantOptions.length >= 2 && !from && !to) {
-      setFrom(plantOptions[0]);
-      setTo(plantOptions[1]);
+    if (plantData.length >= 2 && !from && !to) {
+      setFrom(plantData[0]);
+      setTo(plantData[1]);
     }
-  }, [plantOptions, from, to]);
+  }, [plantData, from, to]);
 
 
 
@@ -183,7 +175,7 @@ export default function TransferStockModal({ isOpen, onClose }) {
                 <div className={styles.selectWrapper}>
                   <label>From</label>
                   <select value={from} onChange={(e) => setFrom(e.target.value)} className={styles.select}>
-                    {plantOptions.map((plant, index) => (
+                    {plantData.map((plant, index) => (
                       <option key={index} value={plant} disabled={plant === from}>{plant}</option>
                     ))}
                   </select>
@@ -191,7 +183,7 @@ export default function TransferStockModal({ isOpen, onClose }) {
                 <div className={styles.selectWrapper}>
                   <label>To</label>
                   <select value={to} onChange={(e) => setTo(e.target.value)} className={styles.select}>
-                    {plantOptions.map((plant, index) => (
+                    {plantData.map((plant, index) => (
                       <option key={index} value={plant} disabled={plant === from}>{plant}</option>
                     ))}
                   </select>

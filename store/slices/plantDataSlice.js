@@ -2,11 +2,11 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Async thunk to fetch and filter Google Sheets data by brand
 // masterSlice.js
-export const fetchMasterData = createAsyncThunk(
-  'sheet/fetchMasterData',
+export const fetchPlantData = createAsyncThunk(
+  'sheet/fetchPlantData',
   async (thunkAPI) => {
     try {
-      const res = await fetch(`/api/master-data`);
+      const res = await fetch(`/api/plant-data`);
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.error || 'Failed to fetch');
@@ -21,7 +21,7 @@ export const fetchMasterData = createAsyncThunk(
 const masterSlice = createSlice({
   name: 'sheet',
   initialState: {
-    masterData: [],
+    plantData: [],
     loading: false,
     error: null,
   },
@@ -29,7 +29,7 @@ const masterSlice = createSlice({
   reducers: {
 
     setSheetData: (state, action) => {
-      state.masterData = action.payload;
+      state.plantData = action.payload;
       state.error = null;
       state.loading = false;
     },
@@ -40,42 +40,27 @@ const masterSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
-    clearSheetData: (state) => {
-      state.masterData = [];
-      state.loading = false;
-      state.error = null;
-    },
 
-    updateMasterItem(state, action) {
-      const updatedItem = action.payload;
-      state.masterData = state.masterData.map(item =>
-        item.item_code === updatedItem.item_code ? updatedItem : item
-      );
-    },
 
-    addItemsToMasterData: (state, action) => {
-      // console.log("Master::", state.masterData);
-      state.masterData.push(...action.payload);
-    },
   },
 
   extraReducers: (builder) => {
     builder
-      .addCase(fetchMasterData.pending, (state) => {
+      .addCase(fetchPlantData.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchMasterData.fulfilled, (state, action) => {
+      .addCase(fetchPlantData.fulfilled, (state, action) => {
         state.loading = false;
-        state.masterData = action.payload;
+        state.plantData = action.payload;
       })
-      .addCase(fetchMasterData.rejected, (state, action) => {
+      .addCase(fetchPlantData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
   },
 });
 
-export const { setSheetData, setLoading, setError, clearSheetData, updateMasterItem, addItemsToMasterData, } = masterSlice.actions;
+export const { setSheetData, setLoading, setError } = masterSlice.actions;
 
 export default masterSlice.reducer;

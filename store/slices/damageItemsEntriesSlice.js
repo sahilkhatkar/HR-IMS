@@ -2,8 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Async thunk to fetch and filter Google Sheets data by brand
 // masterSlice.js
-export const damageItemsEntriesSlice = createAsyncThunk(
-  'sheet/damageItemsEntriesSlice',
+export const fetchDamageStockResponses = createAsyncThunk(
+  'sheet/fetchDamageStockResponses',
   async (thunkAPI) => {
     try {
       const res = await fetch(`/api/damage-stock-entries-data`);
@@ -55,15 +55,15 @@ const masterSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      .addCase(damageItemsEntriesSlice.pending, (state) => {
+      .addCase(fetchDamageStockResponses.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(damageItemsEntriesSlice.fulfilled, (state, action) => {
+      .addCase(fetchDamageStockResponses.fulfilled, (state, action) => {
         state.loading = false;
         state.damageStockResponses = action.payload;
       })
-      .addCase(damageItemsEntriesSlice.rejected, (state, action) => {
+      .addCase(fetchDamageStockResponses.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

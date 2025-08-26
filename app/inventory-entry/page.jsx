@@ -20,6 +20,10 @@ export default function InventoryForm() {
 
     const { masterData, loading, error } = useSelector((state) => state.masterData);
     const { salesOrder } = useSelector((state) => state.salesOrder);
+
+    const { plantData } = useSelector((state) => state.plantData);
+    const allPlantOptions = plantData?.map(p => ({ value: p, label: p }));
+
     const [isInward, setIsInward] = useState(true);
     const [rows, setRows] = useState([createNewRow()]);
     const [inputValue, setInputValue] = useState('');
@@ -48,14 +52,6 @@ export default function InventoryForm() {
             .filter(option => option.label.toLowerCase().includes(lowerInput))
             .slice(0, 30);
     }, [inputValue, allItemOptions]);
-
-
-    const allPlantOptions = Array.from(new Set(masterData?.map(item => item.plant_name)))
-        .filter(Boolean)
-        .map(plant => ({
-            value: plant,
-            label: plant,
-        }));
 
     const filteredSaleOrderOptions = useMemo(() => {
         if (!salesOrder || !Array.isArray(salesOrder)) return [];
@@ -468,29 +464,29 @@ export default function InventoryForm() {
                                             isSearchable
 
                                             styles={{
-                                            option: (base, state) => ({
-                                                ...base,
-                                                backgroundColor: state.isSelected
-                                                    ? 'var(--card-bg)'
-                                                    : state.isFocused
-                                                        ? 'var(--primary-light)'
-                                                        : 'var(--bg)',
-                                                color: state.isSelected ? 'var(--primary)' : 'var(--text)',
-                                                cursor: 'pointer',
-                                            }),
-                                            singleValue: (base) => ({
-                                                ...base,
-                                                color: 'var(--primary)',
-                                                fontWeight: 'bold',
-                                            }),
-                                            control: (base) => ({
-                                                ...base,
-                                                boxShadow: 'none',
-                                                '&:hover': {
-                                                    borderColor: 'var(--primary)',
-                                                },
-                                            }),
-                                        }}
+                                                option: (base, state) => ({
+                                                    ...base,
+                                                    backgroundColor: state.isSelected
+                                                        ? 'var(--card-bg)'
+                                                        : state.isFocused
+                                                            ? 'var(--primary-light)'
+                                                            : 'var(--bg)',
+                                                    color: state.isSelected ? 'var(--primary)' : 'var(--text)',
+                                                    cursor: 'pointer',
+                                                }),
+                                                singleValue: (base) => ({
+                                                    ...base,
+                                                    color: 'var(--primary)',
+                                                    fontWeight: 'bold',
+                                                }),
+                                                control: (base) => ({
+                                                    ...base,
+                                                    boxShadow: 'none',
+                                                    '&:hover': {
+                                                        borderColor: 'var(--primary)',
+                                                    },
+                                                }),
+                                            }}
                                         />
 
                                         {/* <CustomDropdown

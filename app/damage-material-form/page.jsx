@@ -26,6 +26,10 @@ export default function DamageItemForm() {
 
     const dispatch = useDispatch();
     const { masterData, error } = useSelector((state) => state.masterData);
+
+    const { plantData } = useSelector((state) => state.plantData);
+    const allPlantOptions = plantData?.map(p => ({ value: p, label: p }));
+
     const [rows, setRows] = useState([createNewRow()]);
     const [formErrors, setFormErrors] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,10 +48,6 @@ export default function DamageItemForm() {
         value: item.item_code,
         label: `${item.description} - ${item.item_code}`,
     })) || [];
-
-    const allPlantOptions = Array.from(new Set(masterData?.map(item => item.plant_name)))
-        .filter(Boolean)
-        .map(plant => ({ value: plant, label: plant }));
 
     const handleChange = (index, field, value) => {
         const updated = [...rows];

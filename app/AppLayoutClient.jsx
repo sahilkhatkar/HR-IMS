@@ -10,7 +10,7 @@ export default function AppLayoutClient({ children }) {
 
   // Define all routes where you want to hide the sidebar
   const hideSidebarRoutes = ['/login', '/unauthorized'];
-  const hideSidebar = hideSidebarRoutes.includes(pathname);
+  const hideSidebar = hideSidebarRoutes.includes(pathname); 
 
   return (
     <>
