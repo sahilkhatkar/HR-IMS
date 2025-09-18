@@ -25,6 +25,7 @@ export default function AddItemsPage() {
     return (
         <AddItemsForm
             onSubmit={handleAddItems}
+            brandOptions={getUniqueValues('brand')}
             pack_sizeOptions={getUniqueValues('pack_size')}
             pack_typeOptions={getUniqueValues('pack_type')}
             hsn_codeOptions={getUniqueValues('hsn_code')}

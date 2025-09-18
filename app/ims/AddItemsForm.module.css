@@ -1,58 +1,99 @@
-.formGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.formField {
+.pageContainer {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  flex: 1;
+  gap: 1rem;
+  max-width: 1200px;
+  margin: auto;
+  padding: 1.5rem;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
 }
 
-.formField input,
-.selectField {
+.heading {
+  font-size: 1.75rem;
+  margin-bottom: .5rem;
+  color: var(--primary);
+}
+
+.gridCard {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.rowHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.gridLayout {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem 1.5rem;
+}
+
+.gridField label {
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+.inputField {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border);
   border-radius: 6px;
-  border: 1px solid #ccc;
 }
 
-.required {
-  color: red;
+.removeBtn {
+  background: #ff4d4f;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
 }
 
 .actions {
   display: flex;
   gap: 1rem;
-  flex-wrap: wrap;
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
-/* button {
-  padding: 0.75rem 1.5rem;
-  font-weight: bold;
+.addRowBtn,
+.submitBtn,
+.previewBtn {
+  padding: 0.6rem 1.2rem;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  font-size: 0.95rem;
 }
 
-button[type="submit"] {
-  background: #1976d2;
+.addRowBtn {
+  background: var(--secondary);
   color: white;
 }
 
-button[type="submit"]:hover {
-  background: #115293;
+.submitBtn {
+  background: var(--primary);
+  color: white;
 }
 
-button[type="button"] {
-  background: #ccc;
-  color: black;
+.previewBtn {
+  background: #f0f0f0;
 }
 
-button[type="button"]:hover {
-  background: #aaa;
-} */
+.required {
+  color: var(--accent);
+}

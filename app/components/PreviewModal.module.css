@@ -24,6 +24,29 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
+.previewOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.previewBox {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+
 .previewBox h3 {
     color: var(--color-primary-blue);
 }

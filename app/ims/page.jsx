@@ -12,8 +12,8 @@ import Link from 'next/link';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// import ModalWrapper from './ModalWrapper';
-// import AddItemsForm from './AddItemsForm';
+import ModalWrapper from './ModalWrapper';
+import AddItemsForm from './AddItemsForm';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -33,15 +33,17 @@ export default function AnimatedTable() {
   // Separate columns
   const DISPLAY_COLUMNS = [
     { key: 'description', label: 'Description' },
-    { key: 'pack_size', label: 'Pack Size' },
     { key: 'pack_type', label: 'Pack Type' },
-    { key: 'hsn_code', label: 'HSN Code' },
+    { key: 'pack_size', label: 'Pack Size' },
+    // { key: 'hsn_code', label: 'HSN Code' },
+    { key: 'brand', label: 'Brand' },
   ];
 
   const FILTERABLE_COLUMNS = [
     { key: 'pack_size', label: 'Pack Size' },
     { key: 'pack_type', label: 'Pack Type' },
-    { key: 'hsn_code', label: 'HSN Code' },
+    // { key: 'hsn_code', label: 'HSN Code' },
+    { key: 'brand', label: 'Brand' },
   ];
 
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -104,20 +106,6 @@ export default function AnimatedTable() {
       </motion.h1>
 
 
-      {/* <button
-        style={{
-          padding: '0.75rem 1.5rem',
-          fontWeight: 'bold',
-          backgroundColor: '#1976d2',
-          color: 'white',
-          borderRadius: '6px',
-          border: 'none',
-          cursor: 'pointer'
-        }}
-        onClick={() => setIsFormOpen(true)}
-      >
-        + Add New Item
-      </button> */}
 
 
 
@@ -209,7 +197,7 @@ export default function AnimatedTable() {
             </select>
           </motion.div>
 
-          <Link href="/add-items">
+          {/* <Link href="/add-items">
             <motion.button
               className={styles.addButton}
               whileHover={{ scale: 1.05 }}
@@ -217,7 +205,16 @@ export default function AnimatedTable() {
             >
               + Add New Items
             </motion.button>
-          </Link>
+          </Link> */}
+
+          <motion.button
+            className={styles.addButton}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setIsFormOpen(true)}
+          >
+            + Add New Item
+          </motion.button>
         </div>
       </div>
 
@@ -303,18 +300,19 @@ export default function AnimatedTable() {
 
 
       {/* Modal showing the form */}
-      {/* <ModalWrapper isOpen={isFormOpen} onClose={() => setIsFormOpen(false)}>
+      <ModalWrapper isOpen={isFormOpen} onClose={() => setIsFormOpen(false)}>
         <AddItemsForm
+          brandOptions={getUniqueValues('brand')}
+          pack_sizeOptions={getUniqueValues('pack_size')}
+          pack_typeOptions={getUniqueValues('pack_type')}
+          hsn_codeOptions={getUniqueValues('hsn_code')}
+          unitOptions={getUniqueValues('unit')}
+          plant_nameOptions={getUniqueValues('plant_name')}
+          lead_timeOptions={getUniqueValues('lead_time')}
+          seasonOptions={['Peak', 'Off', 'Normal']}
           onClose={() => setIsFormOpen(false)}
-          pack_sizeOptions={['Small', 'Medium', 'Large']}
-          pack_typeOptions={['Box', 'Bag', 'Bottle']}
-          hsn_codeOptions={['1234', '5678']}
-          lead_timeOptions={['1 Day', '3 Days']}
-          unitOptions={['Kg', 'Litre']}
-          plant_nameOptions={['Plant A', 'Plant B']}
-          seasonOptions={['Summer', 'Winter']}
         />
-      </ModalWrapper> */}
+      </ModalWrapper>
 
       {/* Toasts */}
       <ToastContainer position="top-right" autoClose={3000} />

@@ -14,9 +14,10 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const fields = {
-  description: { label: 'Description', type: 'text', required: true },
-  pack_size: { label: 'Pack Size', type: 'select', required: true },
+  description: { label: 'Description', type: 'text', required: false },
+  brand: { label: 'Brand', type: 'select', required: true },
   pack_type: { label: 'Pack Type', type: 'select', required: true },
+  pack_size: { label: 'Pack Size', type: 'select', required: true },
   unit: { label: 'Unit', type: 'select', required: true },
   hsn_code: { label: 'HSN Code', type: 'select', required: true },
   lead_time: { label: 'Lead Time', type: 'select', required: false },
@@ -29,6 +30,7 @@ const createEmptyRow = () =>
   Object.fromEntries(fieldKeys.map((key) => [key, '']));
 
 export default function AddItemsForm({
+  brandOptions = [],
   pack_sizeOptions = [],
   pack_typeOptions = [],
   hsn_codeOptions = [],
@@ -47,6 +49,7 @@ export default function AddItemsForm({
     [...options].map((val) => (val ? { label: val, value: val } : val)), []);
 
   const memoizedDropdownOptions = useMemo(() => ({
+    brand: getSortedOptions(brandOptions),
     pack_size: getSortedOptions(pack_sizeOptions),
     pack_type: getSortedOptions(pack_typeOptions),
     hsn_code: getSortedOptions(hsn_codeOptions),
@@ -122,6 +125,8 @@ export default function AddItemsForm({
     }
 
     const itemsWithCodes = generateUniqueItemCodes(items, existingCodes);
+
+    console.log(itemsWithCodes);
 
     try {
       setIsSubmitting(true);

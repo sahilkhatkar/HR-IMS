@@ -27,7 +27,7 @@ export async function POST(req) {
     }
 
     const result = await appendItemsToSheet(items);
-    await appendToFieldMaster(items);
+    // await appendToFieldMaster(items);
 
     const itemCodes = items.map((item) => item.item_code).filter(Boolean);
 
