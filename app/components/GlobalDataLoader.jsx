@@ -3,36 +3,23 @@
 
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchStockData } from '../../store/slices/gSheetData';
-import { fetchMasterData } from '../../store/slices/masterDataSlice';
 import { setLiveStockData } from '../../store/slices/liveStockDataSlice';
 import { setFormResponses } from '../../store/slices/formResponsesSlice';
-import { fetchDamageStockResponses } from '../../store/slices/damageItemsEntriesSlice';
-import { fetchSalesOrderData } from '../../store/slices/salesOrderDataSlice';
-import { fetchPlantData } from '@/store/slices/plantDataSlice';
+import { refreshAllData } from '@/store/slices/globalDataWrapper';
 
 
 export default function GlobalWrapper({ children }) {
   const dispatch = useDispatch();
-  // const { stockData } = useSelector((state) => state.data);
-  const { masterData } = useSelector((state) => state.masterData);
-  const { plantData } = useSelector((state) => state.plantData);
+
   const { stockData } = useSelector((state) => state.liveStockData);
   const { formResponses } = useSelector((state) => state.formResponses);
-  const { damageStockResponses } = useSelector((state) => state.damageStock);
-  const { salesOrder } = useSelector((state) => state.salesOrder);
 
   useEffect(() => {
 
-    console.log(masterData.length, "Master Data Length");
-    if (masterData.length === 0) {
-      dispatch(fetchMasterData());
-    }
-
-    console.log(plantData.length, "Plant Data Length");
-    if (plantData.length === 0) {
-      dispatch(fetchPlantData());
-    }
+    // console.log(masterData.length, "Master Data Length");
+    // if (masterData.length === 0) {
+    //   dispatch(fetchMasterData());
+    // }
 
     // Live Stock Data
     const fetchStockData = async () => {
@@ -83,21 +70,12 @@ export default function GlobalWrapper({ children }) {
     };
 
     // Call function if needed
-    if (stockData.length === 0 || formResponses.length === 0) {
+    if (stockData.length === 0 || formResponses.length === 0)
       fetchStockData();
-    }
 
-    console.log(damageStockResponses.length, "Damage Stock Responses Length");
-    if (damageStockResponses.length === 0) {
-      dispatch(fetchDamageStockResponses());
-    }
+    dispatch(refreshAllData());
 
-    console.log(salesOrder.length, "Sales Order Responses Length");
-    if (salesOrder.length === 0) {
-      dispatch(fetchSalesOrderData());
-    }
-
-  }, [dispatch, masterData, plantData, stockData, formResponses, damageStockResponses, salesOrder]);
+  }, [dispatch, stockData, formResponses]);
 
   return <>{children}</>;
 }

@@ -18,6 +18,7 @@ const sidebarRoutes = [
   { href: '/', label: 'Dashboard', icon: MdDashboard },
   { href: '/ims', label: 'IMS Master', icon: FaDatabase },
   { href: '/live-stock', label: 'Live Stock', icon: FaBoxes },
+  // { href: '/live-stock-old', label: 'Live Stock (Old)', icon: FaBoxes },
   // { href: '/add-items', label: 'Add Item', icon: AiOutlinePlusCircle },
   { href: '/inventory-entry', label: 'In - Out', icon: BiTransferAlt },
   { href: '/inventory-form-responses', label: 'Stock entries', icon: SiGoogleforms },

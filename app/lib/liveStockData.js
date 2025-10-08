@@ -17,8 +17,6 @@ function toSnakeCase(str) {
 }
 
 export async function fetchStockData() {
-  // const keyFile = path.resolve('./app/lib/credentials.json');
-
   const base64Credentials = process.env.GOOGLE_CREDENTIALS;
   if (!base64Credentials) {
     throw new Error('GOOGLE_CREDENTIALS environment variable is missing');
@@ -28,9 +26,6 @@ export async function fetchStockData() {
   const credentials = JSON.parse(decoded);
 
   try {
-    // const content = await fs.readFile(keyFile, 'utf8');
-    // const credentials = JSON.parse(content);
-
     const auth = new google.auth.GoogleAuth({
       credentials,
       scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
@@ -59,16 +54,18 @@ export async function fetchStockData() {
       }, {})
     );
 
-    // Step 3: Filter data by brand
-    // const filteredData = allData.filter((row) =>
-    //   row.brand?.toLowerCase() === brand?.toLowerCase()
-    // );
+    // ✅ Step 3: Format numeric fields
+    const numericKeys = ['max_level', 'unplanned_stock_qty', 'pending_purchase_qty', 'planned_stock_qty'];
 
-    // console.log(`Fetched ${filteredData.length} items for brand: ${brand} from ${allData.length} total items.`);
+    const formattedData = allData.map(item => {
+      const formattedItem = { ...item };
+      numericKeys.forEach(key => {
+        formattedItem[key] = item[key] === '' ? '' : Number(item[key]);
+      });
+      return formattedItem;
+    });
 
-    return allData;
-    return filteredData;
-
+    return formattedData;
   } catch (err) {
     console.error('Error reading Google Sheets data:', err);
     return [];

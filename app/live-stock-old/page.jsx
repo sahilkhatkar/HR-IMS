@@ -15,136 +15,31 @@ import Select from 'react-select';
 import { useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import SmallSelect from '../components/SmallSelect';
 
 const ITEMS_PER_PAGE = 10;
 
 // Column configurations
 const COLUMNS_DISPLAY = [
     { key: 'description', label: 'Description' },
+    { key: 'unit', label: 'Unit' },
     { key: 'plant_name', label: 'Plant' },
     { key: 'max_level', label: 'Max Level' },
-    { key: 'unplanned_stock_qty', label: 'Unplanned' },
-    { key: 'planned_stock_qty', label: 'Planned' },
+    { key: 'unplanned_stock_qty', label: 'Unplanned Stock' },
+    { key: 'planned_stock_qty', label: 'Planned Stock Qty' },
     { key: 'age', label: 'Age (in Days)' },
+    // { key: 'pending_purchase_qty', label: 'Pending Purchase Qty' },
 ];
 
 const COLUMNS_FILTERABLE = [
     { key: 'pack_size', label: 'Pack Size' },
     { key: 'pack_type', label: 'Pack Type' },
+    { key: 'unit', label: 'Unit' },
     { key: 'plant_name', label: 'Plant' },
     { key: 'max_level', label: 'Max Level' },
 ];
 
 export default function Livestock() {
-    const { stockData } = useSelector((state) => state.liveStockData);
-    const { masterData } = useSelector((state) => state.masterData);
-    const { formResponses } = useSelector((state) => state.formResponses);
-
-
-
-    function aggregateStock(data) {
-        const resultMap = {};
-        const today = new Date();
-
-        for (const item of data) {
-            const { item_code, stock_qty = 0, form_type, date, plant_name } = item;
-            if (!item_code) continue;
-
-            // Parse date (assuming "mm/dd/yyyy" format)
-            const parsedDate = date ? new Date(date) : null;
-
-            if (!resultMap[item_code]) {
-                resultMap[item_code] = {
-                    item_code,
-                    stock_qty: 0,
-                    planned_stock_qty: 0,
-                    latestDate: null,
-                    plant: null,
-                };
-            }
-
-            // --- STOCK CALCULATION ---
-            if (form_type === 'Planned') {
-                resultMap[item_code].planned_stock_qty += stock_qty;
-                resultMap[item_code].stock_qty -= stock_qty;
-            } else if (form_type === 'Finish Goods') {
-                resultMap[item_code].planned_stock_qty -= stock_qty;
-            } else {
-                resultMap[item_code].stock_qty += stock_qty;
-
-                // Track latest date with positive stock
-                if (stock_qty > 0 && parsedDate) {
-                    const prevDate = resultMap[item_code].latestDate;
-                    if (!prevDate || parsedDate > prevDate) {
-                        resultMap[item_code].latestDate = parsedDate;
-                        resultMap[item_code].plant = plant_name;
-                    }
-                }
-            }
-        }
-
-        // --- CALCULATE AGE (in days) ---
-        for (const code in resultMap) {
-            const item = resultMap[code];
-            if (item.latestDate) {
-                const diffTime = today - item.latestDate;
-                item.age = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // difference in days
-                item.plant;
-            } else {
-                item.age = ''; // if no valid date found
-                item.plant;
-            }
-            delete item.latestDate; // clean up
-        }
-
-        return Object.values(resultMap);
-    }
-
-    function mergeStockIntoMaster(stockArray, masterArray) {
-        const aggregatedStock = aggregateStock(stockArray);
-        const stockMap = Object.fromEntries(aggregatedStock.map(i => [i.item_code, i]));
-
-        return masterArray.map(product => {
-            const stock = stockMap[product.item_code] || {
-                stock_qty: 0,
-                planned_stock_qty: 0,
-                age: '',
-                plant_name: '',
-            };
-
-            return {
-                ...product,
-                unplanned_stock_qty: stock.stock_qty,
-                planned_stock_qty: stock.planned_stock_qty,
-                age: stock.age,
-                plant_name: stock.plant
-            };
-        });
-    }
-
-    // --- Example Usage ---
-    const finalMergedArray = mergeStockIntoMaster(formResponses, masterData);
-
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 5);
-
-    // Helper function to parse your date format "26-Jun-2025"
-    const parseDate = (dateStr) => {
-        const [day, monthStr, year] = dateStr.split("-");
-        const months = {
-            Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
-            Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11
-        };
-        return new Date(year, months[monthStr], day);
-    };
-
-    // Filter
-    const filteredResponses = formResponses.filter(item => {
-        const itemDate = parseDate(item.date);
-        return itemDate > yesterday; // only keep items newer than yesterday
-    });
+    const { stockData, loading, error } = useSelector((state) => state.liveStockData);
 
     const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
     const [rowsPerPage, setRowsPerPage] = useState(ITEMS_PER_PAGE);
@@ -174,9 +69,9 @@ export default function Livestock() {
     };
 
     const filteredData = useMemo(() => {
-        if (!Array.isArray(finalMergedArray)) return [];
+        if (!Array.isArray(stockData)) return [];
 
-        return finalMergedArray.filter((item) => {
+        return stockData.filter((item) => {
             const searchMatch = Object.values(item).some((val) =>
                 String(val).toLowerCase().includes(searchTerm.toLowerCase())
             );
@@ -209,7 +104,7 @@ export default function Livestock() {
 
             return searchMatch && columnFiltersMatch && colorMatch;
         });
-    }, [finalMergedArray, searchTerm, filters]);
+    }, [stockData, searchTerm, filters]);
 
     const sortedData = useMemo(() => {
         if (!sortConfig.key) return filteredData;
@@ -234,6 +129,11 @@ export default function Livestock() {
             }
         });
     }, [filteredData, sortConfig]);
+
+
+
+
+
 
 
     const handleExportCSV = (data) => {
@@ -271,9 +171,12 @@ export default function Livestock() {
         document.body.removeChild(link);
     };
 
+
     const totalPages = Math.ceil(sortedData.length / rowsPerPage);
     const startIndex = (currentPage - 1) * rowsPerPage;
     const currentItems = sortedData.slice(startIndex, startIndex + rowsPerPage);
+
+    console.log(sortedData)
 
     const getUniqueValues = (key) => {
         if (key === 'plant_name') {
@@ -329,6 +232,11 @@ export default function Livestock() {
         }
     };
 
+
+
+
+    if (loading) return <p>Loading stock data...</p>;
+    if (error) return <p>Error: {error}</p>;
     if (!stockData || !Array.isArray(stockData)) return <p>No data found.</p>;
 
     return (
@@ -364,22 +272,7 @@ export default function Livestock() {
                     return (
                         <div key={col.key} className={styles.columnFilter}>
                             <label>{col.label}</label>
-
-                            <SmallSelect
-                                className={styles.reactSelect}
-                                options={[{ value: 'all', label: 'All' }, ...options]}
-                                value={value}
-                                onChange={(selected) => {
-                                    setFilters(prev => ({ ...prev, [col.key]: selected.value }));
-                                    setCurrentPage(1);
-                                }}
-                                isSearchable={false}
-                                maxWidth='200px'
-                                instanceId="my-select"
-                            />
-
-
-                            {/* <Select
+                            <Select
                                 className={styles.reactSelect}
                                 options={[{ value: 'all', label: 'All' }, ...options]}
                                 value={value}
@@ -405,27 +298,16 @@ export default function Livestock() {
                                         fontSize: '0.9rem'
                                     }),
                                 }}
-                            /> */}
+                            />
                         </div>
 
                     );
                 })}
 
+
+
                 <div className={styles.columnFilter}>
                     <label>Stock Level %</label>
-
-                    <SmallSelect
-                        className={styles.reactSelect}
-                        options={COLOR_FILTERS}
-                        value={COLOR_FILTERS.find(opt => opt.value === filters.colorRange)}
-                        onChange={(selected) => {
-                            setFilters(prev => ({ ...prev, colorRange: selected.value }));
-                            setCurrentPage(1);
-                        }}
-                        isSearchable={false}
-                    />
-
-                    {/* 
                     <Select
                         className={styles.reactSelect}
                         options={COLOR_FILTERS}
@@ -452,15 +334,14 @@ export default function Livestock() {
                                 fontSize: '0.9rem'
                             }),
                         }}
-                    /> */}
-
+                    />
                 </div>
 
 
                 <div className={styles.controls}>
                     <div className={styles.rowsPerPage}>
                         <label>Rows:</label>
-                        {/* <select
+                        <select
                             value={rowsPerPage}
                             onChange={(e) => {
                                 setRowsPerPage(Number(e.target.value));
@@ -470,26 +351,13 @@ export default function Livestock() {
                             {[10, 20, 30, 50].map((num) => (
                                 <option key={num} value={num}>{num}</option>
                             ))}
-                        </select> */}
-
-                        <SmallSelect
-                            options={[10, 20, 30, 50].map(num => ({
-                                value: num,
-                                label: String(num),
-                            }))}
-                            value={{
-                                value: rowsPerPage,
-                                label: String(rowsPerPage),
-                            }}
-                            onChange={(selected) => {
-                                setRowsPerPage(Number(selected?.value || 10));
-                                setCurrentPage(1);
-                            }}
-                            maxWidth="100px"
-                            isSearchable={false}
-                            placeholder="Rows"
-                        />
+                        </select>
                     </div>
+
+
+
+
+
 
                     <div className={styles.totalStockQty}>
                         <span>Total Stock</span>
@@ -506,6 +374,7 @@ export default function Livestock() {
                         Export CSV
                     </button>
                 </div>
+
             </div>
 
             <motion.p
@@ -515,8 +384,8 @@ export default function Livestock() {
             >
                 {
                     (searchTerm.trim() || Object.values(filters).some(val => val && val !== 'all'))
-                        ? `Found ${filteredData.length} out of ${finalMergedArray.length} items`
-                        : `Total ${finalMergedArray.length} items in stock`
+                        ? `Found ${filteredData.length} out of ${stockData.length} items`
+                        : `Total ${stockData.length} items in stock`
                 }
             </motion.p>
 
@@ -534,6 +403,7 @@ export default function Livestock() {
                                     {col.label} {getSortIcon(col.key)}
                                 </th>
                             ))}
+                            <th className={styles.actionsCol}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -545,9 +415,7 @@ export default function Livestock() {
                             </tr>
                         ) : (
                             currentItems.map((item, index) => (
-                                <tr key={item.item_code || index} className={styles.tableRow}
-                                    onDoubleClick={() => setInfoItem(item)}
-                                >
+                                <tr key={item.item_code || index} className={styles.tableRow}>
                                     <td>{startIndex + index + 1}</td>
                                     {/* {COLUMNS_DISPLAY.map((col) => (
                                         <td key={col.key}>{item[col.key]}</td>
@@ -559,18 +427,20 @@ export default function Livestock() {
 
                                         // Apply style only for these two columns
                                         const isStyledCol = col.key === 'max_level' || col.key === 'unplanned_stock_qty';
-                                        const style = true
-                                            ? getCellStyle(item.max_level, item.unplanned_stock_qty)
-                                            : {};
+                                        const style =
+                                            // isStyledCol
+                                            true
+                                                ? getCellStyle(item.max_level, item.unplanned_stock_qty)
+                                                : {};
 
                                         return (
+
                                             isStyledCol ? (
                                                 <td key={col.key}>
                                                     <span
                                                         style={
-                                                            value !== ""
-                                                                ?
-                                                                {
+                                                            value
+                                                                ? {
                                                                     padding: '8px 12px',
                                                                     borderRadius: '6px',
                                                                     ...style,
@@ -594,8 +464,27 @@ export default function Livestock() {
                                                     </span>
                                                 </td>
                                             )
+
+
+                                            // <td key={col.key} style={style}>
+                                            //     {value}
+                                            // </td>
                                         );
                                     })}
+
+
+
+
+                                    <td className={styles.actionsCell}>
+                                        <button
+                                            className={styles.iconBtn}
+                                            onClick={() => setInfoItem(item)}
+                                            aria-label="Info"
+                                            title="View Details"
+                                        >
+                                            <FaInfoCircle />
+                                        </button>
+                                    </td>
                                 </tr>
                             ))
                         )}
