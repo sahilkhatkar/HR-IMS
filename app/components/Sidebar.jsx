@@ -26,7 +26,7 @@ const sidebarRoutes = [
   { href: '/damage-material-form-responses', label: 'Damage Entries', icon: SiGoogleforms },
   { href: '/stores', label: 'Stores', icon: PiWarehouseFill },
   { href: '/settings', label: 'Settings', icon: IoMdSettings },
-  { href: '/testing', label: 'Testing', icon: IoMdSettings },
+  // { href: '/testing', label: 'Testing', icon: IoMdSettings },
   // Optional extras:
   // { href: '/about', label: 'About', icon: AiOutlineInfoCircle },
   // { href: '/logout', label: 'Log out', icon: FiLogOut },
