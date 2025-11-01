@@ -41,6 +41,9 @@ export default function Livestock() {
     const { masterData } = useSelector((state) => state.masterData);
     const { formResponses } = useSelector((state) => state.formResponses);
 
+    const { stockFGData } = useSelector((state) => state.stockFGData);
+
+    console.log(stockFGData)
 
 
     function aggregateStock(data) {
@@ -68,7 +71,7 @@ export default function Livestock() {
             if (form_type === 'Planned') {
                 resultMap[item_code].planned_stock_qty += stock_qty;
                 resultMap[item_code].stock_qty -= stock_qty;
-            } else if (form_type === 'Finish Goods') {
+            } else if (form_type === 'Finished') {
                 resultMap[item_code].planned_stock_qty -= stock_qty;
             } else {
                 resultMap[item_code].stock_qty += stock_qty;
@@ -270,6 +273,8 @@ export default function Livestock() {
         link.click();
         document.body.removeChild(link);
     };
+
+    console.log(sortedData)
 
     const totalPages = Math.ceil(sortedData.length / rowsPerPage);
     const startIndex = (currentPage - 1) * rowsPerPage;

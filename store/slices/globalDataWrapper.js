@@ -7,6 +7,7 @@ import { fetchPlantData } from './plantDataSlice';
 import { fetchSalesOrderData } from './salesOrderDataSlice';
 import { setFormResponses } from './formResponsesSlice';
 import { setLiveStockData } from './liveStockDataSlice';
+import { fetchStockFGData } from './stockFGData';
 
 export const refreshAllData = createAsyncThunk(
     'global/refreshAllData',
@@ -20,6 +21,7 @@ export const refreshAllData = createAsyncThunk(
             dispatch(fetchPlantData()),
             dispatch(fetchMasterData()),
             dispatch(fetchSalesOrderData()),
+            dispatch(fetchStockFGData()),
         ]);
     }
 );
