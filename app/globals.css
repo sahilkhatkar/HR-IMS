@@ -1,4 +1,11 @@
 :root {
+
+  /* Sidebar */
+  --sb-width: 250px;
+  --sb-rail: 72px;
+  --sb-pad: 12px;
+  --sb-gap: 12px;
+
   --background: #fff;
   --foreground: #171717;
 
@@ -192,7 +199,7 @@
   --topbar-shadow: rgba(0, 0, 0, 0.03);
   --logout-bg: transparent;
   --logout-hover: var(--hover-bg);
-  
+
 }
 
 
@@ -360,4 +367,14 @@ h1 {
   scrollbar-width: thin;
   /* scrollbar-color: #0070f3 #f0f0f0; */
   scrollbar-color: var(--primary, #0070f3) var(--card-bg, #f0f0f0);
+}
+
+/* Reduced motion — global, not in a CSS module */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import styles from './TransferStockModal.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-hot-toast';
-import { addResponseToResponses } from '@/store/slices/formResponsesSlice';
+import { addResponseToResponses } from '../../store/slices/formResponsesSlice';
 import { FaSpinner } from 'react-icons/fa';
 
 export default function TransferStockModal({ isOpen, onClose }) {

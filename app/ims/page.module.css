@@ -1,5 +1,6 @@
 .tableContainer {
     padding: 1rem;
+    flex: 1;
 }
 
 .tableTitle {

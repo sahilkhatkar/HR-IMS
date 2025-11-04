@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLiveStockData } from '../../store/slices/liveStockDataSlice';
 import { setFormResponses } from '../../store/slices/formResponsesSlice';
-import { refreshAllData } from '@/store/slices/globalDataWrapper';
+import { refreshAllData } from '../../store/slices/globalDataWrapper';
 
 
 export default function GlobalWrapper({ children }) {

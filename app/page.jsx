@@ -413,7 +413,7 @@ export default function OverviewPage() {
       </div>
 
       {/* Attention Needed (paginated) */}
-      <div className={styles.card}>
+      {/* <div className={styles.card}>
         <div className={styles.cardHead}>
           <h3>Attention Needed (Low vs. Max / Pending)</h3>
           <span className={styles.cardHint}>Paginated list • threshold coloring applied</span>
@@ -433,10 +433,10 @@ export default function OverviewPage() {
         <div className={styles.tableWrap}>
           <VirtualTable rows={lowSlice} columns={visibleCols} />
         </div>
-      </div>
+      </div> */}
 
       {/* Full table (VIRTUALIZED) */}
-      <div className={styles.card}>
+      {/* <div className={styles.card}>
         <div className={styles.cardHead}>
           <h3>All Live Stock</h3>
           <div className={styles.tableControls}>
@@ -446,7 +446,7 @@ export default function OverviewPage() {
         <div className={styles.tableWrap}>
           <VirtualTable rows={filtered} columns={visibleCols} />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

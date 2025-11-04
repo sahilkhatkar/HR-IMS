@@ -1,19 +1,59 @@
-.bodyCss {
-    background: var(--body-background);
+/* Local-only variables: scope them to the shell */
+.shell {
+  --sidebar-width: 240px;
+  --topbar-height: 56px;
+}
+
+/* Skip link (local class; used via module in layout.js) */
+.skipLink {
+  position: absolute;
+  top: -40px;
+  left: 8px;
+  background: var(--primary);
+  color: var(--card-bg);
+  padding: 6px 10px;
+  border-radius: 8px;
+  z-index: 9999;
+}
+.skipLink:focus { top: 8px; }
+
+/* App shell uses CSS Grid for rock-solid layout */
+.shell {
+  display: flex;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  grid-template-rows: 100vh;
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* When sidebar is hidden (login, unauthorized) */
+.noSidebar {
+  grid-template-columns: 1fr;
+}
+
+.mainArea {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  height: 100vh;
+  background: var(--bg);
 }
 
 .mainContent {
+  display: flex;
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  background: var(--bg);
+  padding: 12px;
+}
 
-    display: flex;
-    flex-direction: column;
-
-    /* border: 2px solid red; */
-    flex: 1 1 auto;
-    /* padding: 1rem 1rem 1rem 0; */
-    margin: 0;
-
-    background: var(--bg);
-    max-height: 100vh;
-    height: 100vh;
-    overflow: auto;
+/* Optional helper */
+.fullBleed {
+  margin-inline: calc(50% - 50vw);
+  width: 100vw;
 }

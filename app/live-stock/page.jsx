@@ -1,640 +1,459 @@
 'use client';
 
+import { useMemo, useState, useDeferredValue, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
-import {
-    FaInfoCircle,
-    FaSort,
-    FaSortUp,
-    FaSortDown
-} from 'react-icons/fa';
+import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import styles from './page.module.css';
+import SmallSelect from '../components/SmallSelectNew';
 import EditModal from '../components/EditModal';
 import InfoModal from '../components/InfoModal';
-import { useState, useMemo } from 'react';
-import Select from 'react-select';
-import { useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import SmallSelect from '../components/SmallSelect';
 
 const ITEMS_PER_PAGE = 10;
 
-// Column configurations
 const COLUMNS_DISPLAY = [
-    { key: 'description', label: 'Description' },
-    { key: 'plant_name', label: 'Plant' },
-    { key: 'max_level', label: 'Max Level' },
-    { key: 'unplanned_stock_qty', label: 'Unplanned' },
-    { key: 'planned_stock_qty', label: 'Planned' },
-    { key: 'age', label: 'Age (in Days)' },
+  { key: 'description', label: 'Description', width: '36ch', minWidth: '220px' },
+  { key: 'plant_name', label: 'Plant', width: '16ch', minWidth: '120px' },
+  { key: 'max_level', label: 'Max Level', width: '12ch', align: 'right' },
+  { key: 'unplanned_stock_qty', label: 'Unplanned', width: '12ch', align: 'right' },
+  { key: 'planned_stock_qty', label: 'Planned', width: '12ch', align: 'right' },
+  { key: 'age', label: 'Age (Days)', width: '10ch', align: 'right' },
 ];
 
 const COLUMNS_FILTERABLE = [
-    { key: 'pack_size', label: 'Pack Size' },
-    { key: 'pack_type', label: 'Pack Type' },
-    { key: 'plant_name', label: 'Plant' },
-    { key: 'max_level', label: 'Max Level' },
+  { key: 'pack_size', label: 'Pack Size' },
+  { key: 'pack_type', label: 'Pack Type' },
+  { key: 'plant_name', label: 'Plant' },
+  { key: 'max_level', label: 'Max Level' },
 ];
 
 export default function Livestock() {
-    const { stockData } = useSelector((state) => state.liveStockData);
-    const { masterData } = useSelector((state) => state.masterData);
-    const { formResponses } = useSelector((state) => state.formResponses);
+  const { stockData } = useSelector((s) => s.liveStockData);
+  const { masterData } = useSelector((s) => s.masterData);
+  const { formResponses } = useSelector((s) => s.formResponses);
 
-    const { stockFGData } = useSelector((state) => state.stockFGData);
+  // parse 26-Jun-2025, 2025-06-26, 06/26/2025
+  const parseDate = useCallback((raw) => {
+    if (!raw) return null;
+    const iso = new Date(raw);
+    if (!Number.isNaN(iso.getTime())) return iso;
+    const m = /^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/.exec(raw);
+    if (m) {
+      const [, d, mon, y] = m;
+      const months = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+      const mm = months[mon];
+      if (mm !== undefined) return new Date(Number(y), mm, Number(d));
+    }
+    const n = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(raw);
+    if (n) {
+      const [, mm, dd, yyyy] = n;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    }
+    return null;
+  }, []);
 
-    console.log(stockFGData)
+  // aggregate
+  const aggregatedStock = useMemo(() => {
+    if (!Array.isArray(formResponses) || formResponses.length === 0) return [];
+    const map = new Map();
+    const now = Date.now();
 
+    for (const row of formResponses) {
+      const { item_code, stock_qty = 0, form_type, date, plant_name } = row || {};
+      if (!item_code) continue;
 
-    function aggregateStock(data) {
-        const resultMap = {};
-        const today = new Date();
+      const e = map.get(item_code) || {
+        item_code, stock_qty: 0, planned_stock_qty: 0, latestDate: null, plant_name: null
+      };
 
-        for (const item of data) {
-            const { item_code, stock_qty = 0, form_type, date, plant_name } = item;
-            if (!item_code) continue;
-
-            // Parse date (assuming "mm/dd/yyyy" format)
-            const parsedDate = date ? new Date(date) : null;
-
-            if (!resultMap[item_code]) {
-                resultMap[item_code] = {
-                    item_code,
-                    stock_qty: 0,
-                    planned_stock_qty: 0,
-                    latestDate: null,
-                    plant: null,
-                };
-            }
-
-            // --- STOCK CALCULATION ---
-            if (form_type === 'Planned') {
-                resultMap[item_code].planned_stock_qty += stock_qty;
-                resultMap[item_code].stock_qty -= stock_qty;
-            } else if (form_type === 'Finished') {
-                resultMap[item_code].planned_stock_qty -= stock_qty;
-            } else {
-                resultMap[item_code].stock_qty += stock_qty;
-
-                // Track latest date with positive stock
-                if (stock_qty > 0 && parsedDate) {
-                    const prevDate = resultMap[item_code].latestDate;
-                    if (!prevDate || parsedDate > prevDate) {
-                        resultMap[item_code].latestDate = parsedDate;
-                        resultMap[item_code].plant = plant_name;
-                    }
-                }
-            }
+      if (form_type === 'Planned') {
+        e.planned_stock_qty += Number(stock_qty) || 0;
+        e.stock_qty -= Number(stock_qty) || 0;
+      } else if (form_type === 'Finished') {
+        e.planned_stock_qty -= Number(stock_qty) || 0;
+      } else {
+        e.stock_qty += Number(stock_qty) || 0;
+        const d = parseDate(date);
+        if ((Number(stock_qty) || 0) > 0 && d && (!e.latestDate || d > e.latestDate)) {
+          e.latestDate = d;
+          e.plant_name = plant_name || null;
         }
-
-        // --- CALCULATE AGE (in days) ---
-        for (const code in resultMap) {
-            const item = resultMap[code];
-            if (item.latestDate) {
-                const diffTime = today - item.latestDate;
-                item.age = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // difference in days
-                item.plant;
-            } else {
-                item.age = ''; // if no valid date found
-                item.plant;
-            }
-            delete item.latestDate; // clean up
-        }
-
-        return Object.values(resultMap);
+      }
+      map.set(item_code, e);
     }
 
-    function mergeStockIntoMaster(stockArray, masterArray) {
-        const aggregatedStock = aggregateStock(stockArray);
-        const stockMap = Object.fromEntries(aggregatedStock.map(i => [i.item_code, i]));
-
-        return masterArray.map(product => {
-            const stock = stockMap[product.item_code] || {
-                stock_qty: 0,
-                planned_stock_qty: 0,
-                age: '',
-                plant_name: '',
-            };
-
-            return {
-                ...product,
-                unplanned_stock_qty: stock.stock_qty,
-                planned_stock_qty: stock.planned_stock_qty,
-                age: stock.age,
-                plant_name: stock.plant
-            };
-        });
+    const out = [];
+    for (const v of map.values()) {
+      let age = '';
+      if (v.latestDate) {
+        const days = Math.floor((now - v.latestDate.getTime()) / 86400000);
+        age = String(days < 0 ? 0 : days);
+      }
+      out.push({
+        item_code: v.item_code,
+        stock_qty: Number(v.stock_qty) || 0,
+        planned_stock_qty: Number(v.planned_stock_qty) || 0,
+        plant_name: v.plant_name || '',
+        age,
+      });
     }
+    return out;
+  }, [formResponses, parseDate]);
 
-    // --- Example Usage ---
-    const finalMergedArray = mergeStockIntoMaster(formResponses, masterData);
-
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 5);
-
-    // Helper function to parse your date format "26-Jun-2025"
-    const parseDate = (dateStr) => {
-        const [day, monthStr, year] = dateStr.split("-");
-        const months = {
-            Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
-            Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11
-        };
-        return new Date(year, months[monthStr], day);
-    };
-
-    // Filter
-    const filteredResponses = formResponses.filter(item => {
-        const itemDate = parseDate(item.date);
-        return itemDate > yesterday; // only keep items newer than yesterday
+  // merge to master
+  const merged = useMemo(() => {
+    if (!Array.isArray(masterData) || masterData.length === 0) return [];
+    const map = new Map(aggregatedStock.map((x) => [x.item_code, x]));
+    return masterData.map((p) => {
+      const s = map.get(p.item_code);
+      return {
+        ...p,
+        unplanned_stock_qty: Number(s?.stock_qty ?? 0),
+        planned_stock_qty: Number(s?.planned_stock_qty ?? 0),
+        age: s?.age ?? '',
+        plant_name: s?.plant_name ?? (p.plant_name ?? ''),
+      };
     });
+  }, [masterData, aggregatedStock]);
 
-    const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
-    const [rowsPerPage, setRowsPerPage] = useState(ITEMS_PER_PAGE);
-    const [selectedItem, setSelectedItem] = useState(null);
-    const [infoItem, setInfoItem] = useState(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [filters, setFilters] = useState({ colorRange: 'all' });
+  // state
+  const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
+  const [rowsPerPage, setRowsPerPage] = useState(ITEMS_PER_PAGE);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [infoItem, setInfoItem] = useState(null); // keeping if InfoModal still used elsewhere; not rendering button.
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState({ colorRange: 'all' });
 
-    const COLOR_FILTERS = [
-        { label: 'All', value: 'all' },
-        { label: 'Over 100%', value: 'over_100' },
-        { label: '66% - 100%', value: '66_100' },
-        { label: '33% - 66%', value: '33_66' },
-        { label: 'Below 33%', value: 'below_33' },
-    ];
+  const deferredSearch = useDeferredValue(searchTerm.trim().toLowerCase());
 
+  const COLOR_FILTERS = [
+    { label: 'All', value: 'all' },
+    { label: 'Over 100%', value: 'over_100' },
+    { label: '66% - 100%', value: '66_100' },
+    { label: '33% - 66%', value: '33_66' },
+    { label: 'Below 33%', value: 'below_33' },
+  ];
 
-    const handleSort = (key) => {
-        const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
-        setSortConfig({ key, direction });
-    };
+  const handleSort = useCallback((key) => {
+    setSortConfig((prev) => {
+      const direction = prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc';
+      return { key, direction };
+    });
+  }, []);
 
-    const getSortIcon = (key) => {
-        if (sortConfig.key !== key) return <FaSort />;
-        return sortConfig.direction === 'asc' ? <FaSortUp /> : <FaSortDown />;
-    };
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) return <FaSort />;
+    return sortConfig.direction === 'asc' ? <FaSortUp /> : <FaSortDown />;
+  };
 
-    const filteredData = useMemo(() => {
-        if (!Array.isArray(finalMergedArray)) return [];
+  const uniqueFor = useCallback((key) => {
+    if (key === 'plant_name') {
+      const src = Array.isArray(merged) ? merged : [];
+      return Array.from(new Set(src.map((x) => x.plant_name).filter(Boolean))).sort();
+    }
+    const src = Array.isArray(stockData) ? stockData : [];
+    return Array.from(new Set(src.map((x) => x?.[key]).filter(Boolean))).sort();
+  }, [merged, stockData]);
 
-        return finalMergedArray.filter((item) => {
-            const searchMatch = Object.values(item).some((val) =>
-                String(val).toLowerCase().includes(searchTerm.toLowerCase())
-            );
+  // filter
+  const filteredData = useMemo(() => {
+    if (!Array.isArray(merged)) return [];
+    return merged.filter((item) => {
+      const q = deferredSearch;
+      const searchMatch = q
+        ? Object.values(item).some((v) => String(v ?? '').toLowerCase().includes(q))
+        : true;
 
-            const columnFiltersMatch = Object.entries(filters).every(([key, value]) => {
-                if (key === 'colorRange' || value === 'all') return true;
-                return String(item[key]).trim().toLowerCase() === String(value).trim().toLowerCase();
-            });
+      const columnFiltersMatch = Object.entries(filters).every(([k, v]) => {
+        if (k === 'colorRange' || v === 'all' || v === undefined || v === null || v === '') return true;
+        return String(item[k] ?? '').trim().toLowerCase() === String(v).trim().toLowerCase();
+      });
 
-            // Handle color range filtering
-            const max = Number(item.max_level);
-            const unplanned = Number(item.unplanned_stock_qty);
-
-            let percentage = max > 0 ? (unplanned / max) * 100 : null;
-
-            const colorMatch = (() => {
-                switch (filters.colorRange) {
-                    case 'over_100':
-                        return percentage !== null && percentage > 100;
-                    case '66_100':
-                        return percentage !== null && percentage > 66 && percentage <= 100;
-                    case '33_66':
-                        return percentage !== null && percentage > 33 && percentage <= 66;
-                    case 'below_33':
-                        return percentage !== null && percentage <= 33;
-                    default:
-                        return true;
-                }
-            })();
-
-            return searchMatch && columnFiltersMatch && colorMatch;
-        });
-    }, [finalMergedArray, searchTerm, filters]);
-
-    const sortedData = useMemo(() => {
-        if (!sortConfig.key) return filteredData;
-
-        return [...filteredData].sort((a, b) => {
-            const aVal = a?.[sortConfig.key];
-            const bVal = b?.[sortConfig.key];
-
-            const aNum = Number(aVal);
-            const bNum = Number(bVal);
-
-            const isNumeric = !isNaN(aNum) && !isNaN(bNum);
-
-            if (isNumeric) {
-                return sortConfig.direction === 'asc' ? aNum - bNum : bNum - aNum;
-            } else {
-                const aStr = String(aVal || '');
-                const bStr = String(bVal || '');
-                return sortConfig.direction === 'asc'
-                    ? aStr.localeCompare(bStr)
-                    : bStr.localeCompare(aStr);
-            }
-        });
-    }, [filteredData, sortConfig]);
-
-
-    const handleExportCSV = (data) => {
-        if (!data || data.length === 0) {
-            alert('No data to export.');
-            return;
+      const max = Number(item.max_level);
+      const unplanned = Number(item.unplanned_stock_qty);
+      const pct = max > 0 ? (unplanned / max) * 100 : null;
+      const colorMatch = (() => {
+        switch (filters.colorRange) {
+          case 'over_100': return pct !== null && pct > 100;
+          case '66_100': return pct !== null && pct > 66 && pct <= 100;
+          case '33_66': return pct !== null && pct > 33 && pct <= 66;
+          case 'below_33': return pct !== null && pct <= 33;
+          default: return true;
         }
+      })();
 
-        // Dynamically get all unique keys from the data
-        const allKeys = Array.from(
-            new Set(data.flatMap(item => Object.keys(item)))
-        );
+      return searchMatch && columnFiltersMatch && colorMatch;
+    });
+  }, [merged, deferredSearch, filters]);
 
-        // Optional: sort keys alphabetically (remove this if you want raw order)
-        allKeys.sort();
+  // sort
+  const sortedData = useMemo(() => {
+    if (!sortConfig.key) return filteredData;
+    const { key, direction } = sortConfig;
+    const dir = direction === 'asc' ? 1 : -1;
+    return [...filteredData].sort((a, b) => {
+      const av = a?.[key]; const bv = b?.[key];
+      const an = Number(av); const bn = Number(bv);
+      const bothNum = !Number.isNaN(an) && !Number.isNaN(bn);
+      if (bothNum) return dir * (an - bn);
+      return dir * String(av ?? '').localeCompare(String(bv ?? ''), undefined, { numeric: true, sensitivity: 'base' });
+    });
+  }, [filteredData, sortConfig]);
 
-        const replacer = (key, value) => (value === null || value === undefined ? '' : value);
+  // pagination
+  const totalPages = Math.max(1, Math.ceil(sortedData.length / rowsPerPage));
+  const page = Math.min(currentPage, totalPages);
+  const startIndex = (page - 1) * rowsPerPage;
+  const endIndex = Math.min(sortedData.length, startIndex + rowsPerPage);
+  const currentItems = useMemo(() => sortedData.slice(startIndex, endIndex), [sortedData, startIndex, endIndex]);
 
-        const csv = [
-            allKeys.join(','), // header row
-            ...data.map(row =>
-                allKeys.map(fieldName =>
-                    JSON.stringify(row[fieldName], replacer)
-                ).join(',')
-            ),
-        ].join('\r\n');
-
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', `live_stock_export_${Date.now()}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+  // csv
+  const handleExportCSV = useCallback((data) => {
+    if (!data?.length) { alert('No data to export.'); return; }
+    const keys = Array.from(new Set(data.flatMap(Object.keys))).sort();
+    const esc = (v) => {
+      const s = String(v ?? '');
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
+    const lines = [keys.join(','), ...data.map((row) => keys.map((k) => esc(row[k])).join(','))].join('\r\n');
+    const blob = new Blob([lines], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `live_stock_${Date.now()}.csv`;
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  }, []);
 
-    console.log(sortedData)
+  const getCellStyle = (max, unplanned) => {
+    const maxNum = Number(max);
+    const unplannedNum = Number(unplanned);
+    if (!maxNum) return { backgroundColor: 'var(--lynch_15)', color: 'var(--lynch_75)', fontWeight: 600 };
+    const pct = (unplannedNum / maxNum) * 100;
+    if (pct > 100) return { backgroundColor: '#f3e5f5', color: '#9c27b0', fontWeight: 700 };
+    if (pct > 66) return { backgroundColor: '#e8f5e9', color: '#4caf50', fontWeight: 700 };
+    if (pct > 33) return { backgroundColor: '#fff3e0', color: '#ff9800', fontWeight: 700 };
+    return { backgroundColor: '#ffebee', color: '#f44336', fontWeight: 700 };
+  };
 
-    const totalPages = Math.ceil(sortedData.length / rowsPerPage);
-    const startIndex = (currentPage - 1) * rowsPerPage;
-    const currentItems = sortedData.slice(startIndex, startIndex + rowsPerPage);
+  if (!Array.isArray(stockData)) {
+    return <p className={styles.emptyState}>No data found.</p>;
+  }
 
-    const getUniqueValues = (key) => {
-        if (key === 'plant_name') {
-            return ['CHETRAM', 'HANUMAN', 'PK', 'R.T AGRO', 'SURYA', 'VIRANIYA']; // 👈 Add your own plant names here
-        }
+  return (
+    <div className={styles.tableContainer}>
+      {/* heading with search on the right */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } }}
+        className={styles.headerBar}
+      >
+        <h1 className={styles.tableTitle}>
+          Live Stock <span className={styles.liveDot} />
+        </h1>
 
-        return Array.from(new Set(
-            (Array.isArray(stockData) ? stockData : [])
-                .map((item) => item[key])
-                .filter(Boolean)
-        )).sort();
-    };
-
-
-    const getCellStyle = (max, unplanned) => {
-        const maxNum = Number(max);
-        const unplannedNum = Number(unplanned);
-
-        if (isNaN(maxNum) || maxNum === 0) {
-            return {
-                backgroundColor: '#f0f0f0',
-                color: '#888',
-                fontWeight: 'bold',
-            }; // Grey for missing or 0 max_level
-        }
-
-        const percentage = (unplannedNum / maxNum) * 100;
-
-        if (percentage > 100) {
-            return {
-                backgroundColor: '#f3e5f5', // light purple
-                color: '#9c27b0',
-                fontWeight: 'bold',
-            };
-        } else if (percentage > 66) {
-            return {
-                backgroundColor: '#e8f5e9', // light green
-                color: '#4caf50',
-                fontWeight: 'bold',
-            };
-        } else if (percentage > 33) {
-            return {
-                backgroundColor: '#fff3e0', // light orange
-                color: '#ff9800',
-                fontWeight: 'bold',
-            };
-        } else {
-            return {
-                backgroundColor: '#ffebee', // light red
-                color: '#f44336',
-                fontWeight: 'bold',
-            };
-        }
-    };
-
-    if (!stockData || !Array.isArray(stockData)) return <p>No data found.</p>;
-
-    return (
-        <div className={styles.tableContainer}>
-            <motion.h1
-                className={styles.tableTitle}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }}
-            >Live Stock
-                <span className={styles.liveDot} />
-            </motion.h1>
-
-            <div className={styles.searchBarWrapper}>
-                <input
-                    type="text"
-                    placeholder="Search here..."
-                    className={styles.searchBar}
-                    value={searchTerm}
-                    onChange={(e) => {
-                        setSearchTerm(e.target.value);
-                        setCurrentPage(1);
-                    }}
-                />
-            </div>
-
-            <div className={styles.filters}>
-                {COLUMNS_FILTERABLE.map((col) => {
-                    const options = getUniqueValues(col.key).map(val => ({ value: val, label: val }));
-                    const value = filters[col.key] && filters[col.key] !== 'all'
-                        ? { value: filters[col.key], label: filters[col.key] }
-                        : { value: 'all', label: 'All' };
-
-                    return (
-                        <div key={col.key} className={styles.columnFilter}>
-                            <label>{col.label}</label>
-
-                            <SmallSelect
-                                className={styles.reactSelect}
-                                options={[{ value: 'all', label: 'All' }, ...options]}
-                                value={value}
-                                onChange={(selected) => {
-                                    setFilters(prev => ({ ...prev, [col.key]: selected.value }));
-                                    setCurrentPage(1);
-                                }}
-                                isSearchable={false}
-                                maxWidth='200px'
-                                instanceId="my-select"
-                            />
-
-
-                            {/* <Select
-                                className={styles.reactSelect}
-                                options={[{ value: 'all', label: 'All' }, ...options]}
-                                value={value}
-                                onChange={(selected) => {
-                                    setFilters(prev => ({ ...prev, [col.key]: selected.value }));
-                                    setCurrentPage(1);
-                                }}
-                                isSearchable
-                                menuPortalTarget={typeof window !== 'undefined' ? document.body : null}
-                                styles={{
-                                    menuPortal: base => ({ ...base, zIndex: 9999 }),
-                                    control: base => ({
-                                        ...base,
-                                        minHeight: '34px',
-                                        fontSize: '0.9rem',
-                                        borderColor: '#ccc',
-                                        boxShadow: 'none',
-                                        '&:hover': { borderColor: '#007bff' }
-                                    }),
-                                    menu: base => ({
-                                        ...base,
-                                        zIndex: 9999,
-                                        fontSize: '0.9rem'
-                                    }),
-                                }}
-                            /> */}
-                        </div>
-
-                    );
-                })}
-
-                <div className={styles.columnFilter}>
-                    <label>Stock Level %</label>
-
-                    <SmallSelect
-                        className={styles.reactSelect}
-                        options={COLOR_FILTERS}
-                        value={COLOR_FILTERS.find(opt => opt.value === filters.colorRange)}
-                        onChange={(selected) => {
-                            setFilters(prev => ({ ...prev, colorRange: selected.value }));
-                            setCurrentPage(1);
-                        }}
-                        isSearchable={false}
-                    />
-
-                    {/* 
-                    <Select
-                        className={styles.reactSelect}
-                        options={COLOR_FILTERS}
-                        value={COLOR_FILTERS.find(opt => opt.value === filters.colorRange)}
-                        onChange={(selected) => {
-                            setFilters(prev => ({ ...prev, colorRange: selected.value }));
-                            setCurrentPage(1);
-                        }}
-                        isSearchable={false}
-                        menuPortalTarget={typeof window !== 'undefined' ? document.body : null}
-                        styles={{
-                            menuPortal: base => ({ ...base, zIndex: 9999 }),
-                            control: base => ({
-                                ...base,
-                                minHeight: '34px',
-                                fontSize: '0.9rem',
-                                borderColor: '#ccc',
-                                boxShadow: 'none',
-                                '&:hover': { borderColor: '#007bff' }
-                            }),
-                            menu: base => ({
-                                ...base,
-                                zIndex: 9999,
-                                fontSize: '0.9rem'
-                            }),
-                        }}
-                    /> */}
-
-                </div>
-
-
-                <div className={styles.controls}>
-                    <div className={styles.rowsPerPage}>
-                        <label>Rows:</label>
-                        {/* <select
-                            value={rowsPerPage}
-                            onChange={(e) => {
-                                setRowsPerPage(Number(e.target.value));
-                                setCurrentPage(1);
-                            }}
-                        >
-                            {[10, 20, 30, 50].map((num) => (
-                                <option key={num} value={num}>{num}</option>
-                            ))}
-                        </select> */}
-
-                        <SmallSelect
-                            options={[10, 20, 30, 50].map(num => ({
-                                value: num,
-                                label: String(num),
-                            }))}
-                            value={{
-                                value: rowsPerPage,
-                                label: String(rowsPerPage),
-                            }}
-                            onChange={(selected) => {
-                                setRowsPerPage(Number(selected?.value || 10));
-                                setCurrentPage(1);
-                            }}
-                            maxWidth="100px"
-                            isSearchable={false}
-                            placeholder="Rows"
-                        />
-                    </div>
-
-                    <div className={styles.totalStockQty}>
-                        <span>Total Stock</span>
-                        <p>
-                            {filteredData.reduce((sum, obj) => sum + (Number(obj.unplanned_stock_qty) || 0), 0)}
-                        </p>
-                    </div>
-
-                    {/* Export Button */}
-                    <button
-                        className={styles.exportBtn}
-                        onClick={() => handleExportCSV(filteredData)}
-                    >
-                        Export CSV
-                    </button>
-                </div>
-            </div>
-
-            <motion.p
-                className={styles.tableSubTitle}
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } }}
-            >
-                {
-                    (searchTerm.trim() || Object.values(filters).some(val => val && val !== 'all'))
-                        ? `Found ${filteredData.length} out of ${finalMergedArray.length} items`
-                        : `Total ${finalMergedArray.length} items in stock`
-                }
-            </motion.p>
-
-            <motion.div
-                className={styles.tableWrapper}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }}
-            >
-                <table className={styles.animatedTable}>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            {COLUMNS_DISPLAY.map((col) => (
-                                <th key={col.key} onClick={() => handleSort(col.key)}>
-                                    {col.label} {getSortIcon(col.key)}
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentItems.length === 0 ? (
-                            <tr>
-                                <td colSpan="100%" style={{ textAlign: 'center', padding: '1rem' }}>
-                                    No results found.
-                                </td>
-                            </tr>
-                        ) : (
-                            currentItems.map((item, index) => (
-                                <tr key={item.item_code || index} className={styles.tableRow}
-                                    onDoubleClick={() => setInfoItem(item)}
-                                >
-                                    <td>{startIndex + index + 1}</td>
-                                    {/* {COLUMNS_DISPLAY.map((col) => (
-                                        <td key={col.key}>{item[col.key]}</td>
-                                    ))} */}
-
-
-                                    {COLUMNS_DISPLAY.map((col) => {
-                                        const value = item[col.key];
-
-                                        // Apply style only for these two columns
-                                        const isStyledCol = col.key === 'max_level' || col.key === 'unplanned_stock_qty';
-                                        const style = true
-                                            ? getCellStyle(item.max_level, item.unplanned_stock_qty)
-                                            : {};
-
-                                        return (
-                                            isStyledCol ? (
-                                                <td key={col.key}>
-                                                    <span
-                                                        style={
-                                                            value !== ""
-                                                                ?
-                                                                {
-                                                                    padding: '8px 12px',
-                                                                    borderRadius: '6px',
-                                                                    ...style,
-                                                                }
-                                                                : undefined
-                                                        }
-                                                    >
-                                                        {value}
-                                                    </span>
-                                                </td>
-
-                                            ) : (
-                                                <td key={col.key}>
-                                                    <span
-                                                        style={{
-                                                            ...style,
-                                                            backgroundColor: 'transparent',
-                                                        }}
-                                                    >
-                                                        {value}
-                                                    </span>
-                                                </td>
-                                            )
-                                        );
-                                    })}
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-
-                <div className={styles.pagination}>
-                    <button
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                        className={styles.pageBtn}
-                    >
-                        Previous
-                    </button>
-                    <span className={styles.pageInfo}>
-                        Page {currentPage} of {totalPages}
-                    </span>
-                    <button
-                        disabled={currentPage === totalPages}
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                        className={styles.pageBtn}
-                    >
-                        Next
-                    </button>
-                </div>
-            </motion.div>
-
-            {selectedItem && (
-                <EditModal item={selectedItem} onClose={() => setSelectedItem(null)} />
-            )}
-            {infoItem && (
-                <InfoModal item={infoItem} onClose={() => setInfoItem(null)} />
-            )}
-            <ToastContainer position="top-right" autoClose={3000} />
+        <div className={styles.headerSearchWrap}>
+          <input
+            type="text"
+            placeholder="Search..."
+            className={styles.searchBar}
+            value={searchTerm}
+            aria-label="Search"
+            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+          />
         </div>
-    );
+      </motion.div>
+
+      {/* top KPIs (compact) */}
+      <div className={styles.kpis}>
+        <div className={styles.kpi}><span>Total Items</span><strong>{merged.length}</strong></div>
+        <div className={styles.kpi}><span>Visible</span><strong>{filteredData.length}</strong></div>
+        <div className={styles.kpi}><span>Total Stock</span><strong>{filteredData.reduce((s, o) => s + (Number(o.unplanned_stock_qty) || 0), 0)}</strong></div>
+      </div>
+
+      {/* filters + controls */}
+      <div className={styles.filters}>
+        {COLUMNS_FILTERABLE.map((col) => {
+          const options = uniqueFor(col.key).map((v) => ({ value: v, label: v }));
+          const selected =
+            filters[col.key] && filters[col.key] !== 'all'
+              ? { value: filters[col.key], label: filters[col.key] }
+              : { value: 'all', label: 'All' };
+
+          return (
+            <div key={col.key} className={styles.columnFilter}>
+              <label>{col.label}</label>
+              <SmallSelect
+                options={[{ value: 'all', label: 'All' }, ...options]}
+                value={selected}
+                onChange={(opt) => { setFilters((p) => ({ ...p, [col.key]: opt ? opt.value : 'all' })); setCurrentPage(1); }}
+                isSearchable={false}
+                maxWidth="150px"
+              />
+            </div>
+          );
+        })}
+
+        <div className={styles.columnFilter}>
+          <label>Stock Level %</label>
+          <SmallSelect
+            options={[
+              { label: 'All', value: 'all' },
+              { label: 'Over 100%', value: 'over_100' },
+              { label: '66% - 100%', value: '66_100' },
+              { label: '33% - 66%', value: '33_66' },
+              { label: 'Below 33%', value: 'below_33' },
+            ]}
+            value={COLOR_FILTERS.find((o) => o.value === filters.colorRange)}
+            onChange={(opt) => { setFilters((p) => ({ ...p, colorRange: opt ? opt.value : 'all' })); setCurrentPage(1); }}
+            isSearchable={false}
+            maxWidth="150px"
+          />
+        </div>
+
+        <div className={styles.controls}>
+          <div className={styles.rowsPerPage}>
+            <label>Rows</label>
+            <SmallSelect
+              options={[10, 20, 30, 50, 100].map((n) => ({ value: n, label: String(n) }))}
+              value={{ value: rowsPerPage, label: String(rowsPerPage) }}
+              onChange={(opt) => { setRowsPerPage(Number(opt?.value || ITEMS_PER_PAGE)); setCurrentPage(1); }}
+              maxWidth="100px"
+              isSearchable={false}
+            />
+          </div>
+
+          <button className={styles.exportBtn} onClick={() => handleExportCSV(filteredData)} aria-label="Export CSV">
+            Export CSV
+          </button>
+        </div>
+      </div>
+
+      {/* table */}
+      <motion.div
+        className={styles.tableWrapper}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0, transition: { duration: 0.25, ease: 'easeOut' } }}
+      >
+        <table className={styles.animatedTable}>
+          <colgroup>
+            {/* index column */}
+            <col style={{ width: '48px' }} />
+            {COLUMNS_DISPLAY.map(col => (
+              <col
+                key={col.key}
+                style={{
+                  width: col.width || 'auto',
+                  minWidth: col.minWidth,
+                  maxWidth: col.maxWidth,
+                }}
+              />
+            ))}
+          </colgroup>
+          <thead>
+            <tr>
+              <th style={{ width: 48 }}>#</th>
+              {COLUMNS_DISPLAY.map((col) => (
+                <th
+                  key={col.key}
+                  onClick={() => handleSort(col.key)}
+                  aria-sort={sortConfig.key === col.key ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
+                >
+                  <span className={styles.thInner}>
+                    {col.label} {getSortIcon(col.key)}
+                  </span>
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody>
+            {currentItems.length === 0 ? (
+              <tr>
+                <td colSpan={COLUMNS_DISPLAY.length + 1} className={styles.emptyCell}>No results found.</td>
+              </tr>
+            ) : (
+              currentItems.map((item, idx) => {
+                const colorStyle = getCellStyle(item.max_level, item.unplanned_stock_qty);
+                return (
+                  <tr
+                    key={item.item_code ?? `${startIndex}-${idx}`}
+                    className={styles.tableRow}
+                    onDoubleClick={() => setInfoItem(item)}
+                    tabIndex={0}
+                  >
+                    <td>{startIndex + idx + 1}</td>
+
+                    {/* Description ONLY (no SKU) */}
+                    <td className={styles.wrapCol} style={{ color: colorStyle.color }}>{item.description || '-'}</td>
+
+                    {/* Plant */}
+                    <td><span className={styles.badge} style={{ color: colorStyle.color }}>{item.plant_name || '-'}</span></td>
+
+                    {/* Max */}
+                    <td><span className={styles.pill} style={colorStyle}>{item.max_level ?? ''}</span></td>
+
+                    {/* Unplanned */}
+                    <td><span className={styles.pill} style={colorStyle}>{item.unplanned_stock_qty}</span></td>
+
+                    {/* Planned */}
+                    <td><span className={styles.pillOutline} style={{ color: colorStyle.color }}>{item.planned_stock_qty}</span></td>
+
+                    {/* Age */}
+                    <td><span className={styles.age} style={{ color: colorStyle.color }}>{item.age !== '' ? item.age : '-'}</span></td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </motion.div>
+
+      {/* pagination (outside) */}
+      <div className={styles.paginationBar}>
+        <div className={styles.pageMeta}>
+          Showing <strong>{sortedData.length ? startIndex + 1 : 0}</strong>–<strong>{endIndex}</strong> of <strong>{sortedData.length}</strong>
+        </div>
+        <div className={styles.pagination}>
+          <button
+            disabled={page <= 1}
+            onClick={() => setCurrentPage(1)}
+            className={styles.pageBtn}
+            title="First page"
+          >
+            « First
+          </button>
+          <button
+            disabled={page <= 1}
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            className={styles.pageBtn}
+            title="Previous page"
+          >
+            ‹ Prev
+          </button>
+          <span className={styles.pageInfo}>Page <strong>{page}</strong> of <strong>{totalPages}</strong></span>
+          <button
+            disabled={page >= totalPages}
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            className={styles.pageBtn}
+            title="Next page"
+          >
+            Next ›
+          </button>
+          <button
+            disabled={page >= totalPages}
+            onClick={() => setCurrentPage(totalPages)}
+            className={styles.pageBtn}
+            title="Last page"
+          >
+            Last »
+          </button>
+        </div>
+      </div>
+
+      {selectedItem && <EditModal item={selectedItem} onClose={() => setSelectedItem(null)} />}
+      {infoItem && <InfoModal item={infoItem} onClose={() => setInfoItem(null)} />}
+      <ToastContainer position="top-right" autoClose={3000} />
+    </div>
+  );
 }
